@@ -5,7 +5,7 @@ from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
 
-auth = Blueprint('auth', __name__, url_prefix='/auth')
+auth = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
 
 @auth.post('/register')
@@ -67,12 +67,26 @@ def loginUser():
 
     sqlUser = UserModel.query.filter_by(nim=nim).first()
 
+    if not sqlUser:
+        return jsonify({
+            'error': 'nim salah! silahkan cek kembali'
+        }), HTTP_401_UNAUTHORIZED
+
     if sqlUser:
         isPassCorrect = check_password_hash(sqlUser.password, password)
 
-        if isPassCorrect:
-            access = create_access_token(sqlUser.id)
-            refresh = create_refresh_token(sqlUser.id)
+        if not isPassCorrect:
+            return jsonify({
+                'error': 'password salah! silahkan cek kembali'
+            }), HTTP_401_UNAUTHORIZED
+
+        elif isPassCorrect:
+            generateToken = {
+                'id': sqlUser.id,
+                'nim': sqlUser.nim
+            }
+            access = create_access_token(generateToken)
+            refresh = create_refresh_token(generateToken)
 
             return jsonify({
                 'user': {
@@ -82,6 +96,7 @@ def loginUser():
                     'refresh': refresh
                 }
             }), HTTP_200_OK
+
     return jsonify({
         'error': 'Kesalahan pada autentikasi'
     }), HTTP_401_UNAUTHORIZED

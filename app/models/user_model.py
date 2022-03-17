@@ -1,5 +1,6 @@
 from email.policy import default
 from app.extensions import db
+from sqlalchemy import ForeignKey, Column
 from datetime import datetime, date
 
 
@@ -20,3 +21,4 @@ class UserModel(db.Model):
 class UserLoginModel(db.Model):
     __tablename__ = 'tb_user_login'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, nullable=False)
