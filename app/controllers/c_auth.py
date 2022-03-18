@@ -1,14 +1,10 @@
 import datetime
-from tkinter.tix import Tree
 from flask import Blueprint, jsonify, request
 from app.lib.http_status_code import *
 from app.models.user_model import UserModel, UserLoginModel
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-import redis
-from sqlalchemy.types import Interval
-from settings import Config
 
 auth = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
