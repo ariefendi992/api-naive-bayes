@@ -5,8 +5,8 @@ from datetime import datetime, timedelta
 load_dotenv()
 
 baseDir = os.path.dirname(os.path.abspath(__file__))
-db = os.path.join(baseDir, 'beasiswa.db')
-print(db)
+# db = os.path.join(baseDir, 'beasiswa.db')
+# print(db)
 dir = os.getcwd()
 # tes directori project
 # print('Base Dir = ', baseDir)
