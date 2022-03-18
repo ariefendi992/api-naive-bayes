@@ -19,8 +19,8 @@ class Config(object):
     TESTING = str(os.getenv('TESTING'))
 
     # db configuration
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db
-    # SQLALCHEMY_DATABASE_URI = str(os.getenv('SQLALCHEMY_BATABASE_URI'))
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db
+    SQLALCHEMY_DATABASE_URI = str(os.getenv('SQLALCHEMY_BATABASE_URI'))
     print(SQLALCHEMY_DATABASE_URI)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
