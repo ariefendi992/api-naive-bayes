@@ -1,7 +1,7 @@
 from email.policy import default
 from app.extensions import db
 from sqlalchemy import ForeignKey, Column
-from datetime import datetime, date
+from datetime import datetime, timedelta
 
 
 class UserModel(db.Model):
@@ -22,3 +22,8 @@ class UserLoginModel(db.Model):
     __tablename__ = 'tb_user_login'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
+    refresh_token = db.Column(db.String(512), nullable=False)
+    expire_at = db.Column(db.Interval, )
+    created_at = db.Column('created_at', db.DateTime, default=datetime.now())
+    modified_at = db.Column('modified_at', db.DateTime,
+                            default=datetime.now(), onupdate=datetime.now())
