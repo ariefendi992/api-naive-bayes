@@ -9,6 +9,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 auth = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
 
 
+# register
 @auth.post('/register')
 def registerUser():
     nim = request.json.get('stambuk')
@@ -41,6 +42,7 @@ def registerUser():
     }), HTTP_201_CREATED
 
 
+# Login
 @auth.post('/login')
 def loginUser():
     # nim = request.json.get('stambuk')
@@ -96,6 +98,7 @@ def loginUser():
     }), HTTP_401_UNAUTHORIZED
 
 
+# refresh token
 @auth.post('/token/refresh')
 @jwt_required(refresh=True)
 def refreshToken():
@@ -113,13 +116,19 @@ def refreshToken():
     })
 
 
+# get all user
 @auth.get('/get-all')
 @jwt_required()
 def getAllUser():
-    sqlQuery = UserModel.query.all()
+    # current_user = get_jwt_identity()
+    page = request.args.get('page', 2, type=int)
+    per_page = request.args.get('per_page', 5, type=int)
 
+    sqlQuery = UserModel.query.paginate(page=page, per_page=per_page)
+
+    print(sqlQuery.items)
     data = []
-    for i in sqlQuery:
+    for i in sqlQuery.items:
         data.append({
             'id': i.id,
             'stambuk': i.nim,
@@ -128,11 +137,23 @@ def getAllUser():
             'created_at': i.created_at,
             'updated_at': i.updated_at
         })
+
+    meta = {
+        'page': sqlQuery.page,
+        'pages': sqlQuery.pages,
+        'total_count': sqlQuery.total,
+        'prev_page': sqlQuery.prev_num,
+        'next_page': sqlQuery.next_num,
+        'has_next': sqlQuery.has_next,
+        'has_prev': sqlQuery.has_prev,
+    }
     return jsonify({
-        'data': data
+        'data': data,
+        'meta': meta,
     }), HTTP_200_OK
 
 
+# get one
 @auth.get('/get-one')
 @jwt_required()
 def getOneUser():
@@ -146,5 +167,5 @@ def getOneUser():
     print(sqlQuery)
 
     return jsonify({
-        'user login': userIdentity
+        'data': userIdentity
     })
