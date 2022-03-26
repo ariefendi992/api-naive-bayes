@@ -12,6 +12,11 @@ def jurusan():
     if request.method == 'POST':
         nama_jurusan = request.json.get('jurusan', '')
 
+        if JurusanModel.query.filter_by(nama_jurusan=nama_jurusan).first() is not None:
+            return jsonify({
+                'msg': 'Data sudah ada'
+            })
+
         data_jurusan = JurusanModel(nama_jurusan=nama_jurusan)
         db.session.add(data_jurusan)
         db.session.commit()
@@ -39,6 +44,11 @@ def jurusan():
 def fakultas():
     if request.method == 'POST':
         nama_fakultas = request.json.get('fakultas')
+
+        if FakultasModel.query.filter_by(nama_fakultas=nama_fakultas).first() is not None:
+            return jsonify({
+                'msg': 'Data sudah ada',
+            })
 
         data_fakultas = FakultasModel(nama_fakultas=nama_fakultas)
         db.session.add(data_fakultas)
@@ -68,6 +78,11 @@ def fakultas():
 def fSemester():
     if request.method == 'POST':
         semester = request.json.get('semester')
+
+        if SemesterModel.query.filter_by(semester=semester).first() is not None:
+            return jsonify({
+                'msg': 'data sudah ada'
+            }), HTTP_409_CONFLICT
 
         dataSemester = SemesterModel(semester=semester)
         db.session.add(dataSemester)

@@ -17,6 +17,11 @@ def registerUser():
     gender = request.json.get('gender')
     password = request.json.get('password')
 
+    # if len(nim and nama and gender and password) <= 0:
+    #     return jsonify({
+    #         'error': 'Data tidak boleh kosong',
+    #     }), HTTP_400_BAD_REQUEST
+
     if len(password) < 6:
         return jsonify({
             'error': 'Password minimal 6 digit/karakter'
@@ -71,6 +76,7 @@ def loginUser():
                 'nama': sqlUser.nama_mhs
             }
             expireToken = datetime.timedelta(minutes=20)
+            print(expireToken)
             expireRefreshToken = datetime.timedelta(days=30)
 
             access = create_access_token(
@@ -85,11 +91,13 @@ def loginUser():
             db.session.commit()
 
             return jsonify({
-                'user': {
+                'data': {
+                    'id': sqlUser.id,
                     'stambuk': sqlUser.nim,
                     'nama': sqlUser.nama_mhs,
-                    'access': access,
-                    'refresh': refresh
+                    'token': access,
+                    'refresh': refresh,
+                    'expire': str(expireToken),
                 }
             }), HTTP_200_OK
 
@@ -112,7 +120,7 @@ def refreshToken():
         'id'), refresh_token=accessToken, expire_at=expireToken)
 
     return jsonify({
-        'Refresh Token': accessToken
+        'token': accessToken
     })
 
 
@@ -153,7 +161,7 @@ def getAllUser():
     }), HTTP_200_OK
 
 
-# get one
+# get profil
 @auth.get('/get-one')
 @jwt_required()
 def getOneUser():
@@ -169,3 +177,57 @@ def getOneUser():
     return jsonify({
         'data': userIdentity
     })
+
+
+# edit user
+@auth.route('/get-all/<int:id>', methods=['PUT', 'PATCH'])
+@jwt_required()
+def editUser(id):
+
+    sqlUser = UserModel.query.filter_by(id=id).first()
+
+    print('sqlUser =', sqlUser)
+
+    if not sqlUser:
+        return jsonify({
+            'msg': 'user tidak ada'
+        }), HTTP_404_NOT_FOUND
+
+    stambuk = request.json.get('stambuk')
+    nama = request.json.get('nama')
+    gender = request.json.get('gender')
+    password = request.json.get('password')
+
+    sqlUser.nim = stambuk
+    sqlUser.nama_mhs = nama
+    sqlUser.jenis_kelamin = gender
+    sqlUser.password = password
+
+    db.session.commit()
+
+    return jsonify({
+        'id': sqlUser.id,
+        'stambuk': sqlUser.nim,
+        'nama': sqlUser.nama_mhs,
+        'gender': sqlUser.jenis_kelamin,
+    }), HTTP_201_CREATED
+
+
+# Delete User
+@auth.delete('/get-all/<int:id>')
+@jwt_required()
+def deleteUser(id):
+
+    sqlUser = UserModel.query.filter_by(id=id).first()
+
+    if not sqlUser:
+        return jsonify({
+            'msg': 'akun tidak ditemukan'
+        }), HTTP_404_NOT_FOUND
+
+    db.session.delete(sqlUser)
+    db.session.commit()
+
+    return jsonify({
+        'msg': 'user telah di hapus'
+    }), HTTP_204_NO_CONTENT

@@ -5,6 +5,7 @@ class JurusanModel(db.Model):
     __tablename__ = 'tb_jurusan'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nama_jurusan = db.Column(db.String(32), nullable=False)
+    id_fakultas = db.Column(db.Integer, db.ForeignKey('tb_fakultas.id'))
 
     def __repr__(self) -> str:
         return 'Jurusan {}'.format(self.nama_jurusan)
