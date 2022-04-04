@@ -24,3 +24,4 @@ class Config(object):
 
     # JWT Config
     JWT_SECRET_KEY = str(os.getenv('JWT_SECRET_KEY'))
+    JWT_ACCESS_TOKEN_EXPIRES = str(os.getenv('JWT_ACCESS_TOKEN_EXPIRES'))
