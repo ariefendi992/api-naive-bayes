@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% set filename = 'kat-fakultas' %}
+
+{% block css %}
+<link rel="stylesheet"
+  href="{{ url_for('static', filename='vendors/jquery-datatables/jquery.dataTables.bootstrap5.min.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='vendors/fontawesome/all.min.css') }}">
+<style>
+  table.dataTable td {
+    padding: 15px 8px;
+  }
+
+  .fontawesome-icons .the-icon svg {
+    font-size: 24px;
+  }
+</style>
+{% endblock  %}
+
+{% block content %}
+<div class="content-wrapper container">
+  <div class="page-heading">
+    <h4>Data Training Beasiswa UKT</h4>
+  </div>
+  <div class="page-content">
+    <div class="row">
+      <div class="col-12 col-md-12">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              {# <h5 class="card-title">Data Penerima UKT</h5> #}
+              <a href="#" class="btn btn-primary">.::Tambah Data::.</a>
+              <hr>
+              <div class="table table-responsive">
+                <table class="table">
+
+                  <thead class="text-center">
+                    <tr>
+                      <th>No.</th>
+                      <th>Nama</th>
+                      <th>NIM</th>
+                      <th>NIK</th>
+                      <th>Prodi</th>
+                      <th>Semester</th>
+                      <th>Status</th>
+                      <th>KIP</th>
+                      <th>BM</th>
+                      <th>Penghasilan</th>
+                      <th>Tanggungan</th>
+                      <th>PKH</th>
+                      <th>Keterangan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for data in response.get('data') %}
+                    <tr>
+                      <td>{{ loop.index }}</td>
+                      <td>{{ data.nama }}</td>
+                      <td>{{ data.nim }}</td>
+                      <td>{{ data.nik }}</td>
+                      <td>{{ data.prodi }}</td>
+                      <td>{{ data.semester }}</td>
+                      <td>{{ data.status_mhs }}</td>
+                      <td>{{ data.terima_kip }}</td>
+                      <td>{{ data.terima_bidik_misi }}</td>
+                      <td>{{ data.penghasilan_orang_tua }}</td>
+                      <td>{{ data.jml_tanggungan }}</td>
+                      <td>{{ data.pkh }}</td>
+                      <td>{{ data.keputusan }}</td>
+                    </tr>
+                    {% endfor %}
+
+                  </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination pagination-primary pagination-sm justify-content-end">
+                    {% if response['meta']['has_prev'] %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ response.get('meta').get('prev_page')}}">
+                        <span aria-hidden="true"><i class="bi bi-chevron-left"></i></span>
+                      </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                        <span aria-hidden="true"><i class="bi bi-chevron-left"></i></span>
+                      </a>
+                    </li>
+                    {% endif %}
+                    {% for pages in range(response.get('meta').get('pages')) %}
+                    <li class="page-item {{'active' if pages == response.get('meta').get('page') -1 else ''}}"><a
+                        class="page-link" href="?page={{pages + 1}}">{{pages + 1}}</a></li>
+                    {% endfor %}
+                    {% if response['meta']['has_next'] %}
+                    <li class="page-item"><a class="page-link" href="?page={{ response.get('meta').get('next_page')}}">
+                        <span aria-hidden="true"><i class="bi bi-chevron-right"></i></span>
+                      </a></li>
+                    {% else %}
+                    <li class="page-item disabled">
+                      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                        <span aria-hidden="true"><i class="bi bi-chevron-right"></i></span>
+                      </a>
+                    </li>
+                    {% endif %}
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block js %}
+
+<script src="{{url_for('static', filename='vendors/jquery/jquery.min.js')}}"></script>
+<script src="{{ url_for('static', filename='vendors/jquery-datatables/jquery.dataTables.min.js') }}"></script>
+<script src="{{ url_for('static', filename='vendors/jquery-datatables/custom.jquery.dataTables.bootstrap5.min.js')}}">
+</script>
+<script src="{{ url_for('static', filename='vendors/fontawesome/all.min.js')}}"></script>
+{% endblock  %}

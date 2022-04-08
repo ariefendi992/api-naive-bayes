@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% set filename = 'kat-jurusan' %}
+
+{% block css %}
+<!-- <link rel="stylesheet" href="../../static/vendors/jquery-datatables/jquery.dataTables.min.css"> -->
+<link rel="stylesheet" href="../../static/vendors/jquery-datatables/jquery.dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="../../static/vendors/fontawesome/all.min.css">
+<style>
+  table.dataTable td {
+    padding: 15px 8px;
+  }
+
+  .fontawesome-icons .the-icon svg {
+    font-size: 24px;
+  }
+</style>
+{% endblock  %}
+
+{% block content %}
+<div class="content-wrapper container">
+  <div class="page-heading">
+    <h4>.::Kategori Jurusan::.</h4>
+  </div>
+  <div class="page-content">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="card">
+          <div class="card-content">
+            <div class="card-body">
+              <h5 class="card-title">Data Jurusan</h5>
+              <table class="table" id="table1">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Nama Jurusan</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for data in response %}
+                  <tr>
+                    <td>{{loop.index}}</td>
+                    <td>{{data.jurusan}}</td>
+                    <td>
+                      <a href="" class="btn btn-sm btn-outline-warning">
+                        <i class="fa fa-pen"></i>
+                      </a>
+
+                      <a href="" class="btn btn-sm btn-outline-danger">
+                        <i class="fa fa-trash"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock  %}
+
+{% block js %}
+<script src="../../static/vendors/jquery/jquery.min.js"></script>
+<script src="../../static/vendors/jquery-datatables/jquery.dataTables.min.js"></script>
+<script src="../../static/vendors/jquery-datatables/custom.jquery.dataTables.bootstrap5.min.js"></script>
+<script src="../../static/vendors/fontawesome/all.min.js"></script>
+{% endblock  %}
