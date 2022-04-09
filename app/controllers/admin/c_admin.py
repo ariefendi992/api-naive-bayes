@@ -12,7 +12,7 @@ def adminDashboadr():
 
 @admin.route('/kategori-fakultas', methods=['GET', 'POST'])
 def kategoriF():
-    url = 'http://127.0.0.1:5000/api/v1/kampus/fakultas'
+    url = 'https://api-beasiswa.herokuapp.com/api/v1/kampus/fakultas'
     r = requests.get(url).json()
     response = r.get('data')
 
@@ -21,7 +21,7 @@ def kategoriF():
 
 @admin.route('/kategori-jurusan', methods=['GET', 'POST'])
 def kategoriJ():
-    url = 'http://127.0.0.1:5000/api/v1/kampus/jurusan'
+    url = 'https://api-beasiswa.herokuapp.com/api/v1/kampus/jurusan'
     req = requests.get(url).json()
     response = req.get('data')
 
@@ -30,7 +30,7 @@ def kategoriJ():
 
 @admin.route('/get-ukt', methods=['GET', 'POST'])
 def getUkt():
-    url = 'http://127.0.0.1:5000/api/v1/beasiswa-ukt'
+    url = 'https://api-beasiswa.herokuapp.com/api/v1/beasiswa-ukt'
     headers = {
         'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0OTM3ODcyMCwianRpIjoiODNjNWEwZTAtY2I3Yi00OWU1LWJkNTQtNGNiNjRmYzQ3NjA1IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6eyJpZCI6NywibmltIjoiMTgwMjQwMTQwNzciLCJuYW1hIjoiSXNoYWsgTWFyYXNhYmVzc3kifSwibmJmIjoxNjQ5Mzc4NzIwLCJleHAiOjE2NDk5ODM1MjB9.loc1P90-sw-zhVqL5lI_VUwySQb_vtsHwQOgNlMP-X4'
     }
