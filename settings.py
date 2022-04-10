@@ -18,8 +18,16 @@ class Config(object):
     TESTING = str(os.getenv('TESTING'))
 
     # db configuration
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db
-    # SQLALCHEMY_DATABASE_URI = str(os.getenv('SQLALCHEMY_BATABASE_URI'))
+    # SQLITE
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db
+
+    # MySQL
+    username = str(os.getenv('DB_USER'))
+    password = str(os.getenv('DB_PASSWORD'))
+    host = str(os.getenv('DB_HOST'))
+    database = str(os.getenv('DB_NAME'))
+    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + \
+        username + ':' + password + '@' + host + '/' + database
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT Config

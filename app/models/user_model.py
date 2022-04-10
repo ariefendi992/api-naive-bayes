@@ -20,8 +20,10 @@ class UserLoginModel(db.Model):
     __tablename__ = 'tb_user_login'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, nullable=False)
+    access_token = db.Column(db.String(512), nullable=False)
     refresh_token = db.Column(db.String(512), nullable=False)
-    expire_at = db.Column(db.Interval, )
+    expire_token_at = db.Column(db.Interval, )
+    expire_refresh_at = db.Column(db.Interval, )
     created_at = db.Column('created_at', db.DateTime, default=datetime.now())
     modified_at = db.Column('modified_at', db.DateTime,
-                            default=datetime.now(), onupdate=datetime.now())
+                            onupdate=datetime.now())

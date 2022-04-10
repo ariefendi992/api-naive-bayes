@@ -6,7 +6,7 @@ from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
 
-auth = Blueprint('auth', __name__, url_prefix='/api/v1/auth')
+auth = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 
 # register
@@ -49,6 +49,7 @@ def registerUser():
 
 # Login
 @auth.post('/login')
+@auth.put('/login')
 def loginUser():
     # nim = request.json.get('stambuk')
     nim = request.json.get('stambuk')
@@ -75,20 +76,31 @@ def loginUser():
                 'nim': sqlUser.nim,
                 'nama': sqlUser.nama_mhs
             }
-            expireToken = datetime.timedelta(minutes=20)
+            expireToken = datetime.timedelta(hours=1)
             print(expireToken)
-            expireRefreshToken = datetime.timedelta(days=30)
+            expireRefreshToken = datetime.timedelta(
+                days=30)
 
             access = create_access_token(
                 generateToken, fresh=True, expires_delta=expireToken)
             refresh = create_refresh_token(
                 generateToken, expires_delta=expireRefreshToken)
 
-            _userLogin = UserLoginModel(
-                user_id=sqlUser.id, refresh_token=refresh, expire_at=expireRefreshToken)
+            user_login = UserLoginModel.query.filter_by(
+                user_id=sqlUser.id).first()
 
-            db.session.add(_userLogin)
-            db.session.commit()
+            if not user_login:
+                _userLogin = UserLoginModel(
+                    user_id=sqlUser.id, access_token=access, refresh_token=refresh, expire_token_at=expireToken, expire_refresh_at=expireRefreshToken)
+                db.session.add(_userLogin)
+                db.session.commit()
+
+            else:
+                user_login.access_token = access
+                user_login.refresh_token = refresh
+                user_login.expire_token_at = expireToken
+                user_login.expire_refresh_at = expireRefreshToken
+                db.session.commit()
 
             return jsonify({
                 'data': {
