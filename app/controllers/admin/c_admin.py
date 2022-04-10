@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request
 import requests
 
-admin = Blueprint('admin', __name__, url_prefix='/admin',
+admin = Blueprint('admin', __name__, url_prefix='/',
                   template_folder='../../templates/admin/')
 
 

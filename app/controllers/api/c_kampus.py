@@ -3,7 +3,7 @@ from app.models.kampus_model import *
 from app.extensions import db
 from app.lib.http_status_code import *
 
-kampus = Blueprint('kampus', __name__, url_prefix='/api/v1/kampus')
+kampus = Blueprint('kampus', __name__, url_prefix='/kampus')
 
 
 @kampus.route('/jurusan', methods=['GET', 'POST'])

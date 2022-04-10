@@ -6,12 +6,12 @@ from app.models.kampus_model import *
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.lib.algoritma.algoritma_naive_bayes import CountUkt
 
-ukt = Blueprint('ukt', __name__, url_prefix='/api/v1/beasiswa-ukt')
+ukt = Blueprint('ukt', __name__, url_prefix='/beasiswa-ukt')
 
 
 # get all data
 @ukt.route('/', methods=['GET', 'POST'])
-@jwt_required()
+# @jwt_required()
 def getAll():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
@@ -106,7 +106,7 @@ def addUkt():
 
 # create data by admin
 @ukt.post('/tambah-ukt-admin')
-@jwt_required()
+# @jwt_required()
 def addUkt2():
     id_user = request.json.get('id_user')
     nim = request.json.get('stambuk')
