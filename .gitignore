@@ -1,3 +1,4 @@
 \env
 \migrations
-\main.py
+main.py
+test.py
