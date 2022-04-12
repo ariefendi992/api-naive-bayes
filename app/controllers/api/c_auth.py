@@ -139,7 +139,7 @@ def refreshToken():
 
 # get all user
 @auth.get('/get-all')
-@jwt_required()
+# @jwt_required()
 def getAllUser():
     # current_user = get_jwt_identity()
     page = request.args.get('page', 1, type=int)
@@ -155,8 +155,43 @@ def getAllUser():
             'stambuk': i.nim,
             'nama': i.nama_mhs,
             'gender': i.jenis_kelamin,
-            'created_at': i.created_at,
-            'updated_at': i.updated_at
+            'created_at': str(i.created_at),
+            'updated_at': str(i.updated_at)
+        })
+
+    meta = {
+        'page': sqlQuery.page,
+        'pages': sqlQuery.pages,
+        'total_count': sqlQuery.total,
+        'prev_page': sqlQuery.prev_num,
+        'next_page': sqlQuery.next_num,
+        'has_next': sqlQuery.has_next,
+        'has_prev': sqlQuery.has_prev,
+    }
+    return jsonify({
+        'data': data,
+        'meta': meta,
+    }), HTTP_200_OK
+
+# get user login
+@auth.get('/user-login')
+def getUserLogin():
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 5, type=int)
+
+    sqlQuery = db.session.query(UserLoginModel, UserModel).join(
+        UserModel).paginate(page=page, per_page=per_page)
+
+    data = []
+    for ul, u in sqlQuery.items:
+        data.append({
+            'id': ul.id,
+            'nama': u.nama_mhs,
+            'token': ul.access_token,
+            'refresh_token': ul.refresh_token,
+            'login_pertama': str(ul.created_at),
+            'terakhir_login': str(ul.modified_at),
+
         })
 
     meta = {

@@ -3,16 +3,16 @@ from settings import Config
 from app.registers import registerApp
 
 
-def createApp(test_config=None):
-    app = Flask(__name__, instance_relative_config=True)
-
-    if test_config is None:
-        app.config.from_object(Config)
-    else:
-        app.config.from_mapping(test_config)
-
+def createApp():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    
     registerExtension(app)
     registerApp(app)
+    
+    @app.get('/')
+    def index():
+        return '<h2>Halama Web APIS</h2>'
 
     return app
 
