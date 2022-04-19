@@ -1,20 +1,29 @@
 import datetime
-from flask import Blueprint, jsonify, request
+from fileinput import filename
+from re import S
+from flask import Blueprint, jsonify, request, send_file, url_for
 from app.lib.http_status_code import *
+from app.models.beasiswa_model import UktModel
 from app.models.user_model import UserModel, UserLoginModel
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
+from app.models.upload_model import UploadPhotoModel
+import os
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
+UPLOAD_FOLDER = os.getcwd() + '/app/static/uploads'
 
 # register
+
+
 @auth.post('/register')
 def registerUser():
     nim = request.json.get('stambuk')
     nama = request.json.get('nama')
     gender = request.json.get('gender')
+    email = request.json.get('email')
     password = request.json.get('password')
 
     # if len(nim and nama and gender and password) <= 0:
@@ -35,7 +44,7 @@ def registerUser():
     passwordHash = generate_password_hash(password)
 
     sql = UserModel(nim=nim, nama_mhs=nama,
-                    jenis_kelamin=gender, password=passwordHash)
+                    jenis_kelamin=gender, email=email, password=passwordHash)
     db.session.add(sql)
     db.session.commit()
 
@@ -144,10 +153,9 @@ def getAllUser():
     # current_user = get_jwt_identity()
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 5, type=int)
+    sqlQuery = db.session.query(UserModel).paginate(
+        page=page, per_page=per_page)
 
-    sqlQuery = UserModel.query.paginate(page=page, per_page=per_page)
-
-    print(sqlQuery.items)
     data = []
     for i in sqlQuery.items:
         data.append({
@@ -155,6 +163,7 @@ def getAllUser():
             'stambuk': i.nim,
             'nama': i.nama_mhs,
             'gender': i.jenis_kelamin,
+            'email': i.email,
             'created_at': str(i.created_at),
             'updated_at': str(i.updated_at)
         })
@@ -172,6 +181,7 @@ def getAllUser():
         'data': data,
         'meta': meta,
     }), HTTP_200_OK
+
 
 # get user login
 @auth.get('/user-login')
@@ -226,11 +236,28 @@ def getOneUser():
     }), HTTP_200_OK
 
 
-# edit user
-@auth.route('/get-all/<int:id>', methods=['PUT', 'PATCH'])
-@jwt_required()
-def editUser(id):
+# get user
+@auth.get('/get-uid')
+def getUserById():
 
+    id = request.args.get('id')
+    sqlQuery = UserModel.query.filter_by(id=id).first()
+
+    return jsonify({
+        'id': sqlQuery.id,
+        'nama': sqlQuery.nama_mhs,
+        'nim': sqlQuery.nim,
+        'gender': sqlQuery.jenis_kelamin,
+        'email': sqlQuery.email,
+
+    }), HTTP_200_OK
+
+
+# edit user
+@auth.route('/edit-user', methods=['PUT', 'PATCH', 'GET'])
+# @jwt_required()
+def editUser():
+    id = request.args.get('id')
     sqlUser = UserModel.query.filter_by(id=id).first()
 
     print('sqlUser =', sqlUser)
@@ -245,10 +272,12 @@ def editUser(id):
     gender = request.json.get('gender')
     password = request.json.get('password')
 
+    passwordHash = generate_password_hash(password)
+
     sqlUser.nim = stambuk
     sqlUser.nama_mhs = nama
     sqlUser.jenis_kelamin = gender
-    sqlUser.password = password
+    sqlUser.password = passwordHash
 
     db.session.commit()
 
@@ -265,6 +294,25 @@ def editUser(id):
 @jwt_required()
 def deleteUser(id):
 
+    sqlUser = UserModel.query.filter_by(id=id).first()
+
+    if not sqlUser:
+        return jsonify({
+            'msg': 'akun tidak ditemukan'
+        }), HTTP_404_NOT_FOUND
+
+    db.session.delete(sqlUser)
+    db.session.commit()
+
+    return jsonify({
+        'msg': 'user telah di hapus'
+    }), HTTP_204_NO_CONTENT
+
+
+# Delete User no token
+@auth.delete('/delete-user')
+def deleteUserByAdmin():
+    id = request.args.get('id')
     sqlUser = UserModel.query.filter_by(id=id).first()
 
     if not sqlUser:

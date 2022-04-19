@@ -33,8 +33,7 @@ def getAll():
             'prodi': jur.nama_jurusan,
             'semester': sms.semester,
             'status_mhs': ukt.status_mhs,
-            'terima_kip': ukt.penerima_kip,
-            'terima_bidik_misi': ukt.penerima_bidik_misi,
+            'terima_kip_bm': ukt.penerima_kip_bm,
             'penghasilan_orang_tua': ukt.penghasilan_orang_tua,
             'jml_tanggungan': ukt.jml_tanggungan,
             'pkh': ukt.status_pkh,
@@ -68,25 +67,22 @@ def addUkt():
     id_semester = request.json.get('semester')
     status_mhs = request.json.get('status_mhs')
     penerima_kip = request.json.get('kip')
-    penerima_bidik_misi = request.json.get('bidik_misi')
     penghasilan_orang_tua = request.json.get('penghasilan_orang_tua')
     tanggungan = request.json.get('tanggungan')
     status_pkh = request.json.get('pkh')
     keputusan = request.json.get('keputusan')
 
-    if UktModel.query.filter_by(id_user=id_user).filter_by(nim=nim).filter_by(nik=nik).first() is not None:
-        return jsonify({
-            'error': 'Data sudah ada'
-        }), HTTP_409_CONFLICT
+    # if UktModel.query.filter_by(id_user=id_user).filter_by(nim=nim).filter_by(nik=nik).first() is not None:
+    #     return jsonify({
+    #         'error': 'Data sudah ada'
+    #     }), HTTP_409_CONFLICT
 
     sql = UktModel(id_user=id_user,
-                   nim=nim,
                    nik=nik,
                    prodi=prodi,
                    id_semester=id_semester,
                    status_mhs=status_mhs,
-                   penerima_kip=penerima_kip,
-                   penerima_bidik_misi=penerima_bidik_misi,
+                   penerima_kip_bm=penerima_kip,
                    penghasilan_orang_tua=penghasilan_orang_tua,
                    jml_tanggungan=tanggungan,
                    status_pkh=status_pkh,
@@ -109,31 +105,27 @@ def addUkt():
 # @jwt_required()
 def addUkt2():
     id_user = request.json.get('id_user')
-    nim = request.json.get('stambuk')
     nik = request.json.get('nik')
     prodi = request.json.get('prodi')
     id_semester = request.json.get('semester')
     status_mhs = request.json.get('status_mhs')
     penerima_kip = request.json.get('kip')
-    penerima_bidik_misi = request.json.get('bidik_misi')
     penghasilan_orang_tua = request.json.get('penghasilan_orang_tua')
     tanggungan = request.json.get('tanggungan')
     status_pkh = request.json.get('pkh')
     keputusan = request.json.get('keputusan')
 
-    if UktModel.query.filter_by(id_user=id_user).filter_by(nim=nim).filter_by(nik=nik).first() is not None:
-        return jsonify({
-            'error': 'Data sudah ada'
-        }), HTTP_409_CONFLICT
+    # if UktModel.query.filter_by(id_user=id_user).filter_by(nik=nik).first() is not None:
+    #     return jsonify({
+    #         'error': 'Data sudah ada'
+    #     }), HTTP_409_CONFLICT
 
     sql = UktModel(id_user=id_user,
-                   nim=nim,
                    nik=nik,
                    prodi=prodi,
                    id_semester=id_semester,
                    status_mhs=status_mhs,
-                   penerima_kip=penerima_kip,
-                   penerima_bidik_misi=penerima_bidik_misi,
+                   penerima_kip_bm=penerima_kip,
                    penghasilan_orang_tua=penghasilan_orang_tua,
                    jml_tanggungan=tanggungan,
                    status_pkh=status_pkh,
@@ -160,21 +152,21 @@ def testing_ukt():
     semester = CountUkt.atribut_semester(request.json.get('semester'))
     status_mhs = CountUkt.atribut_status_mhs(request.json.get('status_mhs'))
     kip = CountUkt.atribut_kip(request.json.get('penerima_kip'))
-    bidik_misi = CountUkt.atribut_bidik_misi(request.json.get('bidik_misi'))
     penghasilan = CountUkt.atribut_penghasilan(request.json.get('penghasilan'))
     tanggungan = CountUkt.atribut_jumlah_tanggungan(
         request.json.get('tanggungan'))
     status_pkh = CountUkt.atribut_pkh(request.json.get('pkh'))
 
-    p_layak = prob_class.get('p_layak') * \
-        prodi.get('layak') * semester.get('layak') * \
-        status_mhs.get('layak') * kip.get('layak') * \
-        bidik_misi.get('layak') * penghasilan.get('layak') * \
-        tanggungan.get('layak') * status_pkh.get('layak')
+    p_layak = prob_class['p_layak'] * prodi['layak'] * \
+        semester['layak'] * status_mhs['layak'] * kip['layak'] * \
+        penghasilan['layak'] * tanggungan['layak'] * status_pkh['layak']
+    # * \
+    #     prodi.get('layak') * semester.get('layak') * \
+    #     status_mhs.get('layak') * kip.get('layak') * \
+    #     tanggungan.get('layak') * status_pkh.get('layak')
     p_tidak_layak = prob_class.get('p_tidak_layak') * \
         prodi.get('tidak_layak') * semester.get('tidak_layak') * \
         status_mhs.get('tidak_layak') * kip.get('tidak_layak') * \
-        bidik_misi.get('tidak_layak') * penghasilan.get('tidak_layak') * \
         tanggungan.get('tidak_layak') * status_pkh.get('tidak_layak')
 
     if p_layak >= p_tidak_layak:
@@ -190,7 +182,6 @@ def testing_ukt():
         'atr_semester': semester,
         'atr_status_mhs': status_mhs,
         'atr_penerima_kip': kip,
-        'atr_penerima_bidik_misi': bidik_misi,
         'atr_penghasilan_orang_tua': penghasilan,
         'atr_jml_tanggungan': tanggungan,
         'atr_status_pkh': status_pkh,
@@ -204,3 +195,19 @@ def testing_ukt():
         'data': data,
         'kesimpulan': msg
     })
+
+
+# cek ukt
+@ukt.get('/cek-ukt')
+def cekUkt():
+    sqlQuery = UktModel.query.all()
+
+    data = []
+    for ukt in sqlQuery:
+        data.append({
+            'id_user': ukt.id_user
+        })
+
+    return jsonify({
+        'data': data,
+    }), HTTP_200_OK

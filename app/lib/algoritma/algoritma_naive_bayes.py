@@ -58,30 +58,19 @@ class CountUkt():
         ) / CountUkt.total_data().get('tidak_layak')
 
         return ({
-            'layak': sql_layak,
-            'tidak_layak': sql_tidak_layak
+            'layak': round(sql_layak, 2),
+            'tidak_layak': round(sql_tidak_layak, 2)
         })
 
     def atribut_kip(status):
-        sql_layak = ukt.query.filter(ukt.penerima_kip == status, ukt.keputusan == 'layak').count(
+        sql_layak = ukt.query.filter(ukt.penerima_kip_bm == status, ukt.keputusan == 'layak').count(
         ) / CountUkt.total_data().get('layak')
-        sql_tidak_layak = ukt.query.filter(ukt.penerima_kip == status, ukt.keputusan == 'tidak layak').count(
+        sql_tidak_layak = ukt.query.filter(ukt.penerima_kip_bm == status, ukt.keputusan == 'tidak layak').count(
         ) / CountUkt.total_data().get('tidak_layak')
 
         return {
-            'layak': sql_layak,
-            'tidak_layak': sql_tidak_layak,
-        }
-
-    def atribut_bidik_misi(status):
-        sql_layak = ukt.query.filter(ukt.penerima_bidik_misi == status, ukt.keputusan == 'layak').count(
-        ) / CountUkt.total_data().get('layak')
-        sql_tidak_layak = ukt.query.filter(ukt.penerima_bidik_misi == status, ukt.keputusan == 'tidak layak').count(
-        ) / CountUkt.total_data().get('tidak_layak')
-
-        return {
-            'layak': sql_layak,
-            'tidak_layak': sql_tidak_layak,
+            'layak': round(sql_layak, 2),
+            'tidak_layak': round(sql_tidak_layak, 2)
         }
 
     def atribut_penghasilan(penghasilan):
@@ -140,6 +129,6 @@ class CountUkt():
             ukt.status_pkh == status, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
 
         return {
-            'layak': sql_layak,
-            'tidak_layak': sql_tidak_layak
+            'layak': round(sql_layak, 2),
+            'tidak_layak': round(sql_tidak_layak, 2)
         }

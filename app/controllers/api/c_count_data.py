@@ -1,5 +1,4 @@
 from flask import Blueprint, jsonify
-from sqlalchemy import null
 from app.lib.http_status_code import HTTP_200_OK
 from app.models.user_model import UserModel, UserLoginModel
 from app.models.beasiswa_model import UktModel
