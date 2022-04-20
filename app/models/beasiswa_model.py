@@ -9,13 +9,14 @@ class UktModel(db.Model):
     id_user = db.Column(db.Integer, db.ForeignKey(
         'tb_user.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     nik = db.Column(db.String(32), nullable=False)
-    prodi = db.Column(db.Integer, db.ForeignKey(
+    id_prodi = db.Column(db.Integer, db.ForeignKey(
         'tb_jurusan.id'), nullable=False)
     id_semester = db.Column(db.Integer, db.ForeignKey(
         'tb_semester.id'), nullable=False)
     status_mhs = db.Column(db.String(32), nullable=False)
     penerima_kip_bm = db.Column(db.String(32), nullable=False)
-    penghasilan_orang_tua = db.Column(db.String(64), nullable=False)
+    id_penghasilan = db.Column(db.Integer, db.ForeignKey(
+        'tb_penghasilan.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     jml_tanggungan = db.Column(db.Integer, nullable=False)
     status_pkh = db.Column(db.String(32), nullable=False)
     keputusan = db.Column(db.String(32), nullable=True)

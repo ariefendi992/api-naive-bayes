@@ -30,9 +30,9 @@ class CountUkt():
 
     def atribut_prodi(prodi):
         sql_layak = ukt.query.filter(
-            ukt.prodi == prodi, ukt.keputusan == 'layak').count() / CountUkt.total_data().get('layak')
+            ukt.id_prodi == prodi, ukt.keputusan == 'layak').count() / CountUkt.total_data().get('layak')
         sql_tidak = ukt.query.filter(
-            ukt.prodi == prodi, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
+            ukt.id_prodi == prodi, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
 
         return ({
             'layak': round(sql_layak, 2),
@@ -95,9 +95,9 @@ class CountUkt():
         #     caseWHen.label('kategori_penghasilan') == kategori, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
 
         sql_layak = ukt.query.filter(
-            ukt.penghasilan_orang_tua == penghasilan, ukt.keputusan == 'layak').count() / CountUkt.total_data().get('layak')
+            ukt.id_penghasilan == penghasilan, ukt.keputusan == 'layak').count() / CountUkt.total_data().get('layak')
         sql_tidak_layak = ukt.query.filter(
-            ukt.penghasilan_orang_tua == penghasilan, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
+            ukt.id_penghasilan == penghasilan, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
 
         return {
             'layak': round(sql_layak, 2),

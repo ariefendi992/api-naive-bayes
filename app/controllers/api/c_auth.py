@@ -128,6 +128,7 @@ def loginUser():
 
 
 # refresh token
+@auth.put('/token-refresh')
 @auth.post('/token-refresh')
 @jwt_required(refresh=True)
 def refreshToken():
@@ -137,8 +138,14 @@ def refreshToken():
     accessToken = create_access_token(
         identity=identity, expires_delta=expireToken)
 
-    sqlQuery = UserLoginModel(user_id=identity.get(
-        'id'), refresh_token=accessToken, expire_at=expireToken)
+    sqlQuery = UserLoginModel.query.filter_by(id=identity.get('id')).first()
+
+    sqlQuery.user_id = identity.get('id')
+    sqlQuery.access_token = accessToken
+    sqlQuery.expire_token_at = expireToken
+
+    # sqlQuery = UserLoginModel(user_id=identity.get(
+    #     'id'), refresh_token=accessToken, expire_token_at=expireToken)
     db.session.commit()
 
     return jsonify({
@@ -270,6 +277,7 @@ def editUser():
     stambuk = request.json.get('stambuk')
     nama = request.json.get('nama')
     gender = request.json.get('gender')
+    email = request.json.get('email')
     password = request.json.get('password')
 
     passwordHash = generate_password_hash(password)
@@ -277,6 +285,7 @@ def editUser():
     sqlUser.nim = stambuk
     sqlUser.nama_mhs = nama
     sqlUser.jenis_kelamin = gender
+    sqlUser.email = email
     sqlUser.password = passwordHash
 
     db.session.commit()
@@ -286,6 +295,7 @@ def editUser():
         'stambuk': sqlUser.nim,
         'nama': sqlUser.nama_mhs,
         'gender': sqlUser.jenis_kelamin,
+        'email': sqlUser.email
     }), HTTP_201_CREATED
 
 
