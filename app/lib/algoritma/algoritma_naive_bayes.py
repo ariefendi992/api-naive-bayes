@@ -24,8 +24,8 @@ class CountUkt():
         ) / CountUkt.total_data().get('total_data')
 
         return {
-            'p_layak': round(sql_layak, 2),
-            'p_tidak_layak': round(sql_tidak, 2),
+            'layak': round(sql_layak, 2),
+            'tidak_layak': round(sql_tidak, 2),
         }
 
     def atribut_prodi(prodi):

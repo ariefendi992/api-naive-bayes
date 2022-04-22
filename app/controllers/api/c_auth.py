@@ -2,6 +2,7 @@ import datetime
 from fileinput import filename
 from re import S
 from flask import Blueprint, jsonify, request, send_file, url_for
+from sqlalchemy import exists
 from app.lib.http_status_code import *
 from app.models.beasiswa_model import UktModel
 from app.models.user_model import UserModel, UserLoginModel
@@ -336,6 +337,25 @@ def deleteUserByAdmin():
     return jsonify({
         'msg': 'user telah di hapus'
     }), HTTP_204_NO_CONTENT
+
+
+# get user is not exist in tb ukt
+@auth.get('/user-not-ukt')
+def userNotExist():
+    sqlQuery = db.session.query(UserModel).filter(
+        ~exists(UktModel.id_user).where(UserModel.id == UktModel.id_user)).all()
+
+    data = []
+    for user in sqlQuery:
+        data.append({
+            'id': user.id,
+            'nama': user.nama_mhs,
+            'stambuk': user.nim
+        })
+
+    return jsonify({
+        'data': data
+    })
 
 
 @auth.route('/logut', methods=['DELETE'])

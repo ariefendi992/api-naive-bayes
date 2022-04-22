@@ -22,8 +22,6 @@ def getAll():
         .join(UserModel, JurusanModel, SemesterModel, PenghasilanModel).paginate(
         page=page, per_page=per_page)
 
-    print(sqlQuery.iter_pages())
-
     data = []
     for ukt, user, jur, sms, peng in sqlQuery.items:
         data.append({
@@ -207,7 +205,27 @@ def editUktData():
     }), HTTP_201_CREATED
 
 
+# Delete record ukt
+@ukt.delete('/delete')
+def deleteUkt():
+    id = request.args.get('id')
+    sqlQuery = UktModel.query.filter_by(id=id).first()
+
+    if not sqlQuery:
+        return jsonify({
+            'msg': 'id data record tidak ada'
+        })
+
+    db.session.delete(sqlQuery)
+    db.session.commit()
+
+    return jsonify({
+        'msg': 'user telah di hapus'
+    }), HTTP_204_NO_CONTENT
+
 # Data Testing
+
+
 @ukt.route('/uji-data', methods=['GET', 'POST'])
 def testing_ukt():
     total_data = CountUkt.total_data()
@@ -222,10 +240,10 @@ def testing_ukt():
         request.json.get('tanggungan'))
     status_pkh = CountUkt.atribut_pkh(request.json.get('pkh_kks'))
 
-    p_layak = prob_class['p_layak'] * prodi['layak'] * \
+    p_layak = prob_class['layak'] * prodi['layak'] * \
         semester['layak'] * status_mhs['layak'] * kip['layak'] * \
         penghasilan['layak'] * tanggungan['layak'] * status_pkh['layak']
-    p_tidak_layak = prob_class.get('p_tidak_layak') * \
+    p_tidak_layak = prob_class.get('tidak_layak') * \
         prodi.get('tidak_layak') * semester.get('tidak_layak') * \
         status_mhs.get('tidak_layak') * kip.get('tidak_layak') * \
         tanggungan.get('tidak_layak') * status_pkh.get('tidak_layak')
@@ -247,28 +265,12 @@ def testing_ukt():
         'atr_jml_tanggungan': tanggungan,
         'atr_status_pkh': status_pkh,
         'probabilitas': {
-            'p_layak': round(p_layak, 2),
-            'p_tidak_layak': round(p_tidak_layak, 2)
+            'layak': round(p_layak, 2),
+            'tidak_layak': round(p_tidak_layak, 2)
         }
     })
 
     return jsonify({
         'data': data,
         'kesimpulan': msg
-    }), HTTP_200_OK
-
-
-# cek ukt
-@ukt.get('/cek-ukt')
-def cekUkt():
-    sqlQuery = UktModel.query.all()
-
-    data = []
-    for ukt in sqlQuery:
-        data.append({
-            'id_user': ukt.id_user
-        })
-
-    return jsonify({
-        'data': data,
     }), HTTP_200_OK
