@@ -30,13 +30,13 @@ class CountUkt():
 
     def atribut_prodi(prodi):
         sql_layak = ukt.query.filter(
-            ukt.id_prodi == prodi, ukt.keputusan == 'layak').count() / CountUkt.total_data().get('layak')
-        sql_tidak = ukt.query.filter(
-            ukt.id_prodi == prodi, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
+            ukt.id_prodi == prodi, ukt.keputusan == 'layak').count()
+        sql_tidak_layak = ukt.query.filter(
+            ukt.id_prodi == prodi, ukt.keputusan == 'tidak layak').count()
 
         return ({
-            'layak': round(sql_layak, 2),
-            'tidak_layak': round(sql_tidak, 2)
+            'layak': round(sql_layak / CountUkt.total_data()['layak'], 2) if sql_layak != 0 else round((sql_layak + 1) / (CountUkt.total_data()['layak'] + 7), 2),
+            'tidak_layak': round(sql_tidak_layak / CountUkt.total_data()['tidak_layak'], 2) if sql_tidak_layak != 0 else round((sql_tidak_layak + 1) / (CountUkt.total_data()['tidak_layak'] + 7), 2),
         })
 
     def atribut_semester(semester):
@@ -46,8 +46,8 @@ class CountUkt():
             ukt.id_semester == semester, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
 
         return ({
-            'layak': round(sql_layak, 2),
-            'tidak_layak': round(sql_tidak_layak, 2),
+            'layak': round(sql_layak / CountUkt.total_data()['layak'], 2) if sql_layak != 0 else round((sql_layak + 1) / (CountUkt.total_data()['layak'] + 7), 2),
+            'tidak_layak': round(sql_tidak_layak / CountUkt.total_data()['tidak_layak'], 2) if sql_tidak_layak != 0 else round((sql_tidak_layak + 1) / (CountUkt.total_data()['tidak_layak'] + 7), 2),
         })
 
     def atribut_status_mhs(status):
@@ -58,8 +58,8 @@ class CountUkt():
         ) / CountUkt.total_data().get('tidak_layak')
 
         return ({
-            'layak': round(sql_layak, 2),
-            'tidak_layak': round(sql_tidak_layak, 2)
+            'layak': round(sql_layak / CountUkt.total_data()['layak'], 2) if sql_layak != 0 else round((sql_layak + 1) / (CountUkt.total_data()['layak'] + 7), 2),
+            'tidak_layak': round(sql_tidak_layak / CountUkt.total_data()['tidak_layak'], 2) if sql_tidak_layak != 0 else round((sql_tidak_layak + 1) / (CountUkt.total_data()['tidak_layak'] + 7), 2),
         })
 
     def atribut_kip(status):
@@ -68,10 +68,10 @@ class CountUkt():
         sql_tidak_layak = ukt.query.filter(ukt.penerima_kip_bm == status, ukt.keputusan == 'tidak layak').count(
         ) / CountUkt.total_data().get('tidak_layak')
 
-        return {
-            'layak': round(sql_layak, 2),
-            'tidak_layak': round(sql_tidak_layak, 2)
-        }
+        return ({
+            'layak': round(sql_layak / CountUkt.total_data()['layak'], 2) if sql_layak != 0 else round((sql_layak + 1) / (CountUkt.total_data()['layak'] + 7), 2),
+            'tidak_layak': round(sql_tidak_layak / CountUkt.total_data()['tidak_layak'], 2) if sql_tidak_layak != 0 else round((sql_tidak_layak + 1) / (CountUkt.total_data()['tidak_layak'] + 7), 2),
+        })
 
     def atribut_penghasilan(penghasilan):
         # kategori = ""
@@ -99,10 +99,10 @@ class CountUkt():
         sql_tidak_layak = ukt.query.filter(
             ukt.id_penghasilan == penghasilan, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
 
-        return {
-            'layak': round(sql_layak, 2),
-            'tidak_layak': round(sql_tidak_layak, 2)
-        }
+        return ({
+            'layak': round(sql_layak / CountUkt.total_data()['layak'], 2) if sql_layak != 0 else round((sql_layak + 1) / (CountUkt.total_data()['layak'] + 7), 2),
+            'tidak_layak': round(sql_tidak_layak / CountUkt.total_data()['tidak_layak'], 2) if sql_tidak_layak != 0 else round((sql_tidak_layak + 1) / (CountUkt.total_data()['tidak_layak'] + 7), 2),
+        })
 
     def atribut_jumlah_tanggungan(tanggungan):
         if int(tanggungan) > 5:
@@ -117,10 +117,10 @@ class CountUkt():
         sql_tidak_layak = db.session.query(func.count(case_when)).filter(
             ukt.jml_tanggungan == tanggungan, ukt.keputusan == 'tidak layak').scalar() / CountUkt.total_data().get('tidak_layak')
 
-        return {
-            'layak': round(sql_layak, 2),
-            'tidak_layak': round(sql_tidak_layak, 2)
-        }
+        return ({
+            'layak': round(sql_layak / CountUkt.total_data()['layak'], 2) if sql_layak != 0 else round((sql_layak + 1) / (CountUkt.total_data()['layak'] + 7), 2),
+            'tidak_layak': round(sql_tidak_layak / CountUkt.total_data()['tidak_layak'], 2) if sql_tidak_layak != 0 else round((sql_tidak_layak + 1) / (CountUkt.total_data()['tidak_layak'] + 7), 2),
+        })
 
     def atribut_pkh(status):
         sql_layak = ukt.query.filter(
@@ -128,7 +128,7 @@ class CountUkt():
         sql_tidak_layak = ukt.query.filter(
             ukt.status_pkh == status, ukt.keputusan == 'tidak layak').count() / CountUkt.total_data().get('tidak_layak')
 
-        return {
-            'layak': round(sql_layak, 2),
-            'tidak_layak': round(sql_tidak_layak, 2)
-        }
+        return ({
+            'layak': round(sql_layak / CountUkt.total_data()['layak'], 2) if sql_layak != 0 else round((sql_layak + 1) / (CountUkt.total_data()['layak'] + 7), 2),
+            'tidak_layak': round(sql_tidak_layak / CountUkt.total_data()['tidak_layak'], 2) if sql_tidak_layak != 0 else round((sql_tidak_layak + 1) / (CountUkt.total_data()['tidak_layak'] + 7), 2),
+        })

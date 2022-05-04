@@ -86,11 +86,10 @@ def loginUser():
                 'nim': sqlUser.nim,
                 'nama': sqlUser.nama_mhs
             }
-            expireToken = datetime.timedelta(hours=1)
+            expireToken = datetime.timedelta(seconds=10)
             print(expireToken)
             expireRefreshToken = datetime.timedelta(
                 days=30)
-
             access = create_access_token(
                 generateToken, fresh=True, expires_delta=expireToken)
             refresh = create_refresh_token(

@@ -223,9 +223,8 @@ def deleteUkt():
         'msg': 'user telah di hapus'
     }), HTTP_204_NO_CONTENT
 
+
 # Data Testing
-
-
 @ukt.route('/uji-data', methods=['GET', 'POST'])
 def testing_ukt():
     total_data = CountUkt.total_data()
@@ -239,16 +238,20 @@ def testing_ukt():
     tanggungan = CountUkt.atribut_jumlah_tanggungan(
         request.json.get('tanggungan'))
     status_pkh = CountUkt.atribut_pkh(request.json.get('pkh_kks'))
+    print('prodi = ', prodi)
 
     p_layak = prob_class['layak'] * prodi['layak'] * \
-        semester['layak'] * status_mhs['layak'] * kip['layak'] * \
-        penghasilan['layak'] * tanggungan['layak'] * status_pkh['layak']
+        semester['layak'] * status_mhs['layak'] * \
+        kip['layak'] * penghasilan['layak'] * \
+        tanggungan['layak'] * status_pkh['layak']
+
     p_tidak_layak = prob_class.get('tidak_layak') * \
         prodi.get('tidak_layak') * semester.get('tidak_layak') * \
         status_mhs.get('tidak_layak') * kip.get('tidak_layak') * \
-        tanggungan.get('tidak_layak') * status_pkh.get('tidak_layak')
+        penghasilan['tidak_layak'] * tanggungan.get('tidak_layak') * \
+        status_pkh.get('tidak_layak')
 
-    if p_layak >= p_tidak_layak:
+    if p_layak > p_tidak_layak:
         msg = 'layak'
     else:
         msg = 'tidak layak'
@@ -265,8 +268,8 @@ def testing_ukt():
         'atr_jml_tanggungan': tanggungan,
         'atr_status_pkh': status_pkh,
         'probabilitas': {
-            'layak': round(p_layak, 2),
-            'tidak_layak': round(p_tidak_layak, 2)
+            'layak': format(p_layak, '.9f'),
+            'tidak_layak': '{:.9f}'.format(p_tidak_layak)
         }
     })
 
