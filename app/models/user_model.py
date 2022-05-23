@@ -10,6 +10,7 @@ class UserModel(db.Model):
     nama_mhs = db.Column(db.String(128), nullable=False)
     jenis_kelamin = db.Column(db.Enum('laki-laki', 'perempuan'))
     email = db.Column(db.String(128), nullable=False)
+    picture = db.Column(db.String(128), nullable=False)
     password = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=utcMakassar())
     updated_at = db.Column(db.DateTime, onupdate=utcMakassar())

@@ -86,8 +86,8 @@ def loginUser():
                 'nim': sqlUser.nim,
                 'nama': sqlUser.nama_mhs
             }
-            expireToken = datetime.timedelta(seconds=10)
-            print(expireToken)
+            expireToken = datetime.timedelta(minutes=60)
+            print(expireToken.seconds)
             expireRefreshToken = datetime.timedelta(
                 days=30)
             access = create_access_token(
@@ -118,7 +118,8 @@ def loginUser():
                     'nama': sqlUser.nama_mhs,
                     'token': access,
                     'refresh': refresh,
-                    'expire': str(expireToken),
+                    'expire': str(expireToken.seconds),
+                    # 'expire': str(expireToken),
                 }
             }), HTTP_200_OK
 
@@ -256,6 +257,7 @@ def getUserById():
         'nim': sqlQuery.nim,
         'gender': sqlQuery.jenis_kelamin,
         'email': sqlQuery.email,
+        'picture': sqlQuery.picture,
 
     }), HTTP_200_OK
 

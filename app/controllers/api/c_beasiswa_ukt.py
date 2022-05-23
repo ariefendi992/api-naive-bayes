@@ -55,6 +55,35 @@ def getAll():
     }), HTTP_200_OK
 
 
+@ukt.get('/data-record2')
+def getAll2():
+
+    sqlQuery = db.session.query(
+        UktModel, UserModel, JurusanModel, SemesterModel, PenghasilanModel)\
+        .join(UserModel, JurusanModel, SemesterModel, PenghasilanModel)
+
+    data = []
+    for ukt, user, jur, sms, peng in sqlQuery:
+        data.append({
+            'id': ukt.id,
+            'nama': user.nama_mhs,
+            'nim': user.nim,
+            'nik': ukt.nik,
+            'prodi': jur.nama_jurusan,
+            'semester': sms.semester,
+            'status_mhs': ukt.status_mhs,
+            'terima_kip_bm': ukt.penerima_kip_bm,
+            'penghasilan_orang_tua': peng.ket,
+            'jml_tanggungan': ukt.jml_tanggungan,
+            'pkh': ukt.status_pkh,
+            'keputusan': ukt.keputusan,
+        })
+
+    return jsonify({
+        'data': data,
+    }), HTTP_200_OK
+
+
 # create data by user
 @ukt.post('/tambah-ukt')
 @jwt_required()
