@@ -3,3 +3,4 @@
 main.py
 test.py
 flask-api.zip
+__pycache__

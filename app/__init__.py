@@ -7,12 +7,13 @@ def createApp():
     app = Flask(__name__)
     app.config.from_object(Config)
     
-    registerExtension(app)
     registerApp(app)
+    registerExtension(app)
+    from app.extensions import db, migrate
     
     @app.get('/')
     def index():
-        return '<h2>Halama Web APIS</h2>'
+        return '<h2>Halaman Web APIS</h2>'
 
     return app
 

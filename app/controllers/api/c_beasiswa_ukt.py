@@ -285,8 +285,7 @@ def testing_ukt():
     else:
         msg = 'tidak layak'
 
-    data = []
-    data.append({
+    data = {
         'total_data': total_data,
         'p_class': prob_class,
         'atr_prodi': prodi,
@@ -300,7 +299,7 @@ def testing_ukt():
             'layak': format(p_layak, '.9f'),
             'tidak_layak': '{:.9f}'.format(p_tidak_layak)
         }
-    })
+    }
 
     return jsonify({
         'data': data,

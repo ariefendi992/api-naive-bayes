@@ -17,7 +17,6 @@ class Config(object):
 
     SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + \
         username + ':' + password + '@' + host + '/' + database
-    # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://beaa2475_root:TeknikUIM17@localhost/beaa2475_db_beasiswa'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT Config
