@@ -1,4 +1,4 @@
-git remote set-url origin https://github.com/ariefendi992/api-naive-bayes.git
+git remote set-url origin https://github.com/ariefendi992/uim-beasiswa-naive-bayes.git
 git branch -M main
 git push -u origin main
 

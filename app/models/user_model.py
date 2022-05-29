@@ -8,11 +8,10 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nim = db.Column(db.String(32), nullable=False)
     nama_mhs = db.Column(db.String(128), nullable=False)
-    id_prodi = db.Column(db.Integer, db.ForeignKey
-                         ('tb_jurusan.id', ondelete='CASCADE', onupdate='CASCADE'))
+    prodi = db.Column(db.String(128), nullable=False)
     jenis_kelamin = db.Column(db.Enum('laki-laki', 'perempuan'))
     email = db.Column(db.String(128), nullable=False)
-    picture = db.Column(db.String(128), nullable=False)
+    picture = db.Column(db.String(128), nullable=True)
     password = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=utcMakassar())
     updated_at = db.Column(db.DateTime, onupdate=utcMakassar())

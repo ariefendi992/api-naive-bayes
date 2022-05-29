@@ -1,4 +1,5 @@
 from enum import unique
+from turtle import pen
 from app.extensions import db
 
 
@@ -25,7 +26,30 @@ class UktModel(db.Model):
         return "id_User = {}; status = {}".format(self.id_user, self.keputusan)
 
 
-# db KIP
-class KipModel(db.Model):
-    __tablename__ = 'tb_kip'
+class DataTestingUktModel(db.Model):
+    __tablename__ = 'tb_ukt_testing'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nama = db.Column(db.String(128), nullable=False)
+    prodi = db.Column(db.String(64), nullable=False)
+    semester = db.Column(db.String(8), nullable=False)
+    status_mhs = db.Column(db.String(64), nullable=False)
+    status_kip = db.Column(db.String(64), nullable=False)
+    penghasilan = db.Column(db.String(128), nullable=False)
+    jml_tanggungan = db.Column(db.String(8), nullable=False)
+    status_pkh = db.Column(db.String(64), nullable=False)
+    keputusan = db.Column(db.String(64), nullable=False)
+    
+    def __init__(self, id, nama, prodi, semester, status_mhs, status_kip, penghasilan, jml_tanggungan, status_pkh, keputusan):
+        self.nama = nama
+        self.prodi = prodi
+        self.semester = semester
+        self.status_mhs = status_mhs
+        self.status_kip = status_kip
+        self.penghasilan = penghasilan
+        self.jml_tanggungan = jml_tanggungan
+        self.status_pkh = status_pkh
+        self.keputusan = keputusan
+        
+    def __repr__(self):
+        return f'nama : {self.nama} prodi : {self.prodi}, semester : {self.semester}, status mahasiswa : {self.status_mhs}, status kip : {self.status_kip}, penghasilan : {self.penghasilan}, jumlah tanggungan : {self.jml_tanggungan}, status pkh : {self.status_pkh}, keputusan : {self.keputusan}'
+    

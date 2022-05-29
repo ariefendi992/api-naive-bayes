@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.lib.http_status_code import *
-from app.models.beasiswa_model import UktModel
+from app.models.beasiswa_model import DataTestingUktModel, UktModel
 from app.models.user_model import UserModel
 from app.models.kategori_model import *
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -305,3 +305,27 @@ def testing_ukt():
         'data': data,
         'kesimpulan': msg
     }), HTTP_200_OK
+    
+
+# Data Testing Ukt
+@ukt.get('/data-testing')
+def fetch_data_testing():
+    sql = DataTestingUktModel.query.all()
+    
+    data = {}
+    for datas in sql:
+        data.append({
+            'id': datas.id,
+            'nama': datas.nama,
+            'prodi': datas.prodi,
+            'semester': datas.semester, 
+            'status_mhs': datas.status_mhs,
+            'status_kip': datas.status_kip,
+            'penghasilan': datas.jml_penghasilan,
+            'tnaggungan': datas.jml_tanggungan,
+            'status_pkh': datas.status_pkh,
+            'keputusan': datas.keputusan,
+        })     
+     
+    return jsonify(data), HTTP_200_OK
+        

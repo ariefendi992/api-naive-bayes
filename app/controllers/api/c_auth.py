@@ -1,6 +1,5 @@
 import datetime
 from fileinput import filename
-from re import S
 from flask import Blueprint, jsonify, request, send_file, url_for
 from sqlalchemy import exists
 from app.lib.http_status_code import *
@@ -24,7 +23,7 @@ UPLOAD_FOLDER = os.getcwd() + '/app/static/uploads'
 def registerUser():
     nim = request.json.get('stambuk')
     nama = request.json.get('nama')
-    id_prodi = request.json.get('id_prodi')
+    prodi = request.json.get('prodi')
     gender = request.json.get('gender')
     email = request.json.get('email')
     password = request.json.get('password')
@@ -46,7 +45,7 @@ def registerUser():
 
     passwordHash = generate_password_hash(password)
 
-    sql = UserModel(nim=nim, nama_mhs=nama, id_prodi=id_prodi,
+    sql = UserModel(nim=nim, nama_mhs=nama, prodi=prodi,
                     jenis_kelamin=gender, email=email, password=passwordHash)
     db.session.add(sql)
     db.session.commit()
@@ -55,7 +54,7 @@ def registerUser():
         'id': sql.id,
         'stambuk': sql.nim,
         'nama': sql.nama_mhs,
-        'id_prodi': sql.id_prodi,
+        'prodi': sql.prodi,
         'gender': sql.jenis_kelamin,
         'email': sql.email,
     }), HTTP_201_CREATED
@@ -69,10 +68,14 @@ def loginUser():
     nim = request.json.get('stambuk')
     password = request.json.get('password')
 
-    # sqlUser = UserModel.query.filter_by(nim=nim).first()
-    sqlUser = UserModel.query.join(JurusanModel, UserModel.id_prodi==JurusanModel.id).filter(UserModel.nim==nim).first()
+    sqlUser = UserModel.query.filter_by(nim=nim).first()
     
-    print('sql_user ==', sqlUser)  
+    print('sql_user ==', sqlUser)
+    
+    if sqlUser is None:
+        return jsonify({
+            'error': f'Inputan tidak boleh kosong.!'
+        }), HTTP_401_UNAUTHORIZED
 
     if not sqlUser:
         return jsonify({
@@ -93,7 +96,7 @@ def loginUser():
                 'nim': sqlUser.nim,
                 'nama': sqlUser.nama_mhs
             }
-            expireToken = datetime.timedelta(seconds=3600)
+            expireToken = datetime.timedelta(seconds=120)
             print(expireToken.seconds)
             expireRefreshToken = datetime.timedelta(
                 days=30)
@@ -126,11 +129,10 @@ def loginUser():
                     'id': sqlUser.id,
                     'stambuk': sqlUser.nim,
                     'nama': sqlUser.nama_mhs,
-                    'id_prodi': sqlUser.id_prodi,
+                    'prodi': sqlUser.prodi,
                     'token': access,
                     'refresh': refresh,
                     'expire': str(expireToken.seconds),
-                    # 'expire': str(expireToken),
                     },
                 
             }), HTTP_200_OK
@@ -172,7 +174,7 @@ def refreshToken():
 def getAllUser():
     # current_user = get_jwt_identity()
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 5, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
     sqlQuery = db.session.query(UserModel).paginate(
         page=page, per_page=per_page)
 
@@ -207,7 +209,7 @@ def getAllUser():
 @auth.get('/user-login')
 def getUserLogin():
     page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 5, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
 
     sqlQuery = db.session.query(UserLoginModel, UserModel).join(
         UserModel).paginate(page=page, per_page=per_page)
@@ -248,12 +250,12 @@ def getOneUser():
     print(userIdentity['id'])
 
     print(userIdentity.items())
-    sqlQuery = UserModel.query.join(JurusanModel, UserModel.id_prodi == JurusanModel.id).filter_by(id=userIdentity.get('id')).first()
+    sqlQuery = UserModel.query.filter_by(id=userIdentity.get('id')).first()
 
     return jsonify({
         'nama': sqlQuery.nama_mhs,
         'nim': sqlQuery.nim,
-        'prodi': sqlQuery.id
+        'prodi': sqlQuery.prodi,
     }), HTTP_200_OK
 
 

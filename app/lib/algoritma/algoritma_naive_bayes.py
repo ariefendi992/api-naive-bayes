@@ -13,7 +13,7 @@ class CountUkt():
 
         return {
             'total_data': sql_total_data,
-            'layak': sql_layak,
+            'layak': sql_layak ,
             'tidak_layak': sql_tidak,
         }
 
