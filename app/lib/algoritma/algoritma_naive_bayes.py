@@ -18,10 +18,14 @@ class CountUkt():
         }
 
     def probabilitas_class():
+        # sql_layak = ukt.query.filter(ukt.keputusan == 'layak').count(
+        # ) / CountUkt.total_data().get('total_data')
+        # sql_tidak = ukt.query.filter(ukt.keputusan == 'tidak layak').count(
+        # ) / CountUkt.total_data().get('total_data')
         sql_layak = ukt.query.filter(ukt.keputusan == 'layak').count(
-        ) / CountUkt.total_data().get('total_data')
+        ) / (CountUkt.total_data()['layak'] + CountUkt.total_data()['tidak_layak']) 
         sql_tidak = ukt.query.filter(ukt.keputusan == 'tidak layak').count(
-        ) / CountUkt.total_data().get('total_data')
+        ) / (CountUkt.total_data()['layak'] + CountUkt.total_data()['tidak_layak']) 
 
         return {
             'layak': round(sql_layak, 2),

@@ -8,8 +8,8 @@ from app.models.user_model import UserModel, UserLoginModel
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
-from app.models.upload_model import UploadPhotoModel
-from app.models.kategori_model import JurusanModel
+# from app.models.upload_model import UploadPhotoModel
+# from app.models.kategori_model import JurusanModel
 import os
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
@@ -70,13 +70,7 @@ def loginUser():
 
     sqlUser = UserModel.query.filter_by(nim=nim).first()
     
-    print('sql_user ==', sqlUser)
-    
-    if sqlUser is None:
-        return jsonify({
-            'error': f'Inputan tidak boleh kosong.!'
-        }), HTTP_401_UNAUTHORIZED
-
+   
     if not sqlUser:
         return jsonify({
             'error': 'nim salah! silahkan cek kembali'

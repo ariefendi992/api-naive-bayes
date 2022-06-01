@@ -6,6 +6,7 @@ from app.models.kategori_model import *
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.lib.algoritma.algoritma_naive_bayes import CountUkt
 from app.models.kategori_model import PenghasilanModel
+from app.lib.database import CustomDB
 
 ukt = Blueprint('ukt', __name__, url_prefix='/beasiswa-ukt')
 
@@ -267,7 +268,17 @@ def testing_ukt():
     tanggungan = CountUkt.atribut_jumlah_tanggungan(
         request.json.get('tanggungan'))
     status_pkh = CountUkt.atribut_pkh(request.json.get('pkh_kks'))
-    print('prodi = ', prodi)
+    
+    # svae to table data testing
+    id_user = request.json.get('id_user')
+    id_prodi = request.json.get('id_prodi')
+    id_semester = request.json.get('id_semester')
+    statusMhs = request.json.get('status_mhs')
+    status_kip = request.json.get('kip_bm')
+    id_penghasilan = request.json.get('id_penghasilan')
+    jml_tanggungan = request.json.get('tanggungan')
+    pkh = request.json.get('pkh_kks')
+    
 
     p_layak = prob_class['layak'] * prodi['layak'] * \
         semester['layak'] * status_mhs['layak'] * \
@@ -282,8 +293,20 @@ def testing_ukt():
 
     if p_layak > p_tidak_layak:
         msg = 'layak'
+        hitung = prob_class['layak'] * 100
+        total = 100 - hitung
+        
     else:
         msg = 'tidak layak'
+        hitung = prob_class['tidak_layak'] * 100
+        total = 100 - hitung
+        
+    if request.method == 'POST':
+        sql = DataTestingUktModel(id_user=id_user, id_prodi = id_prodi, id_semester= id_semester, 
+                            status_mhs=statusMhs, penerima_kip_bm=status_kip, id_penghasilan= id_penghasilan,
+                            jml_tanggungan = jml_tanggungan, status_pkh=pkh, keputusan = msg)
+        db.session.add(sql)
+        db.session.commit()
 
     data = {
         'total_data': total_data,
@@ -303,28 +326,35 @@ def testing_ukt():
 
     return jsonify({
         'data': data,
-        'kesimpulan': msg
+        'kesimpulan': msg,
+        'hitung': {
+            'tidak': hitung,
+            'layak': total
+            }
     }), HTTP_200_OK
     
 
 # Data Testing Ukt
 @ukt.get('/data-testing')
 def fetch_data_testing():
-    sql = DataTestingUktModel.query.all()
+    # sql = DataTestingUktModel.query.all()
+    sql = db.session.query(
+                        DataTestingUktModel, UserModel, JurusanModel, SemesterModel, PenghasilanModel)\
+                        .join(UserModel, JurusanModel, SemesterModel, PenghasilanModel).all()
     
-    data = {}
-    for datas in sql:
+    data = []
+    for ukt, user, prodi, sms, penghasilan, in sql:
         data.append({
-            'id': datas.id,
-            'nama': datas.nama,
-            'prodi': datas.prodi,
-            'semester': datas.semester, 
-            'status_mhs': datas.status_mhs,
-            'status_kip': datas.status_kip,
-            'penghasilan': datas.jml_penghasilan,
-            'tnaggungan': datas.jml_tanggungan,
-            'status_pkh': datas.status_pkh,
-            'keputusan': datas.keputusan,
+            'id': ukt.id,
+            'nama': user.nama_mhs,
+            'prodi': prodi.nama_jurusan,
+            'semester': sms.semester, 
+            'status_mhs': ukt.status_mhs,
+            'status_kip': ukt.penerima_kip_bm,
+            'penghasilan': penghasilan.ket,
+            'tanggungan': ukt.jml_tanggungan,
+            'status_pkh': ukt.status_pkh,
+            'keputusan': ukt.keputusan,
         })     
      
     return jsonify(data), HTTP_200_OK

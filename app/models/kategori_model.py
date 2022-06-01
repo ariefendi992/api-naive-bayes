@@ -7,7 +7,7 @@ class JurusanModel(db.Model):
     nama_jurusan = db.Column(db.String(32), nullable=False)
 
     def __repr__(self) -> str:
-        return 'Jurusan {}'.format(self.nama_jurusan)
+        return '(id : {}, Jurusan : {})'.format(self.id, self.nama_jurusan)
 
 
 class SemesterModel(db.Model):
