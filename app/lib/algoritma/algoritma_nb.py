@@ -1,61 +1,35 @@
+from sqlalchemy import null
 
-class Data(object):
-    def __init__(self, table) -> None:
+
+class NaiveBayes(object):
+    def __init__(self, table=null, filter=null) -> None:
         self.table = table
-    
+        self.filter = filter
         
-    def fetch_data(self):
-        return self.table.query.all()
-           
-    def cetak_data(self):
-        print(f'cetak data = {self.fetch_data()}')
-
-class Data2(object):
-    def __init__(self, table) -> None:
+    def setData(self, table, filter):
         self.table = table
+        self.filter = filter
         
-    def __repr__(self) -> str:
-        return self.table.query.all()    
+    def prob_keputusan_layak(self):
+        return self.table.query.filter(self.filter == 'layak').count()    
     
-    def cetak(self):
-        print('data table = ', self.__repr__())
-    
-
-class TotalData(Data):
-    def __init__(self, table, layak, tidak) -> None:
-        super(TotalData, self).__init__(table)
-        self.layak = layak
-        self.tidak = tidak
+    def prob_keputusan_tidak(self):
+        return self.table.query.filter(self.filter == 'tidak layak').count()    
     
     def total_data(self):
-        return self.table.query.count()
+        return self.prob_keputusan_layak() + self.prob_keputusan_tidak() 
+    
         
-    def data_layak(self):
-        return self.table.query.filter(self.layak).count()
-    
-    def data_tidak(self):
-        return self.table.query.filter(self.tidak).count()
-    
-    def cetak_data(self):
-        # super().cetak_data()
-        print('total data = ', self.total_data())
-        print('total data layak = ', self.data_layak())
-        print('total data tidak layak = ', self.data_tidak())
-            
-class TotalProdi(TotalData):
-    def __init__(self, table, layak, tidak, id) -> None:
-        super().__init__(table, layak, tidak)
-        self.id = id
-        
-    def prodi_layak(self):
-        return self.table.query.filter(self.layak).count()
-    
-    def prodi_tidak(self):
-        return self.table.query.filter(self.tidak).count()
-    
-    def cetak_data(self):
-        # super().cetak_data()
-        print('Prodi layak / data layak = ', self.prodi_layak() / super().data_layak())    
-        print('Prodi tidak layak / data tidak layak = ', self.prodi_tidak() / super().data_tidak())    
+class ProbAtribut(NaiveBayes):
+    def __init__(self, table = null, filter = null, atribut = null) -> None:
+        super().__init__(table, filter)
+        self.atribut = atribut
 
-  
+        
+    def prob_atr_layak(self):
+        return self.table.query.filter(self.filter == 'layak', self.atribut).count()
+    
+    def prob_atr_tidak(self):
+        return self.table.query.filter(self.filter == 'tidak layak', self.atribut).count()
+    
+    

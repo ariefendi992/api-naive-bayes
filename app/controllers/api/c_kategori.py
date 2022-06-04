@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from app.lib.database import CustomDB
 from app.models.kategori_model import *
 from app.extensions import db
 from app.lib.http_status_code import *
@@ -108,3 +109,39 @@ def penghasilan():
         return jsonify({
             'data': data
         }), HTTP_200_OK
+        
+# jml tanggungan
+@kategori.route('/tanggungan', methods=['GET','POST'])
+def kat_tanggungan():
+    
+    jml_tanggungan = request.json.get('tanggungan')
+    
+    if request.method == 'POST':
+        data = TanggunganModel(jml_tanggungan=jml_tanggungan)
+        
+        db.session.add(data)
+        db.session.commit()    
+            
+        return jsonify({
+                'id': data.id,
+                'tanggungan' : data.jml_tanggungan
+            })
+    else: 
+        data = CustomDB(TanggunganModel)
+        
+        result = dict()
+        for t in data.fetch_data():
+            result.update({
+                'id' : t.id,
+                'tanggungan' : t.jml_tanggungan
+            })
+        
+        return jsonify({
+            'data' : result
+        })
+
+    
+        
+        
+    
+    
