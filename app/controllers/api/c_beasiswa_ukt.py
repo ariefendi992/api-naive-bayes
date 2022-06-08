@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from app.lib.algoritma.algoritma_nb import NaiveBayes, ProbAtribut
 from app.lib.http_status_code import *
 from app.models.beasiswa_model import DataTestingUktModel, UktModel
-from app.models.user_model import UserModel
+from app.models.user_model import UserLoginModel, UserModel
 from app.models.kategori_model import *
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.lib.algoritma.algoritma_naive_bayes import CountUkt
@@ -357,11 +357,14 @@ def data_uji():
         persen = 100 - hitung
         
     if request.method == 'POST':
-        sql = DataTestingUktModel(id_user=id_user, id_prodi = id_prodi, id_semester= id_semester, 
-                            status_mhs=statusMhs, penerima_kip_bm=status_kip, id_penghasilan= id_penghasilan,
-                            id_tanggungan = id_tanggungan, status_pkh=pkh, keputusan = msg)
-        db.session.add(sql)
-        db.session.commit()
+        user_login = DataTestingUktModel.query.filter_by(
+            id_user=id_user).first()
+        if not user_login:
+            sql = DataTestingUktModel(id_user=id_user, id_prodi = id_prodi, id_semester= id_semester, 
+                                status_mhs=statusMhs, penerima_kip_bm=status_kip, id_penghasilan= id_penghasilan,
+                                id_tanggungan = id_tanggungan, status_pkh=pkh, keputusan = msg)
+            db.session.add(sql)
+            db.session.commit()
     
     return jsonify({
         'total_data' : naive_b.total_data(),

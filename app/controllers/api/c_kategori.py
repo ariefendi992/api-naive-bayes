@@ -112,11 +112,10 @@ def penghasilan():
         
 # jml tanggungan
 @kategori.route('/tanggungan', methods=['GET','POST'])
-def kat_tanggungan():
-    
-    jml_tanggungan = request.json.get('tanggungan')
+def kat_tanggungan():   
     
     if request.method == 'POST':
+        jml_tanggungan = request.json.get('tanggungan')
         data = TanggunganModel(jml_tanggungan=jml_tanggungan)
         
         db.session.add(data)
@@ -129,16 +128,16 @@ def kat_tanggungan():
     else: 
         data = CustomDB(TanggunganModel)
         
-        result = dict()
+        result = []
         for t in data.fetch_data():
-            result.update({
+            result.append({
                 'id' : t.id,
                 'tanggungan' : t.jml_tanggungan
             })
         
         return jsonify({
             'data' : result
-        })
+        }), HTTP_200_OK
 
     
         
