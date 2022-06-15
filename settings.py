@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 load_dotenv()
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-
 class Config(object):
     # general configuration
     SECRET_KEY = str(os.getenv('S_Key'))
@@ -15,8 +14,11 @@ class Config(object):
     host = str(os.getenv('DB_HOST'))
     database = str(os.getenv('DB_NAME'))
 
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + \
-        username + ':' + password + '@' + host + '/' + database
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///db_beasiswa.db'
+    # SQLALCHEMY_DATABASE_URI = 'sqlite:' + APP_ROOT + 'db_beasiswa.db'
+
+    # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + \
+    #     username + ':' + password + '@' + host + '/' + database
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT Config
@@ -25,3 +27,4 @@ class Config(object):
 
     # uploads folder
     # UPLOAD_FOLDER = str(os.getenv('UPLOAD_FOLDER'))
+    print(SQLALCHEMY_DATABASE_URI)
