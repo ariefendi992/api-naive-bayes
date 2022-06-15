@@ -17,8 +17,6 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 UPLOAD_FOLDER = os.getcwd() + '/app/static/uploads'
 
 # register
-
-
 @auth.post('/register')
 def registerUser():
     nim = request.json.get('stambuk')
@@ -161,6 +159,21 @@ def refreshToken():
         'token': accessToken
     }), HTTP_200_OK
 
+# get check stambuk
+@auth.get('/get-stambuk')
+def get_stambuk_by_id():
+    sql = UserModel.query.all()
+
+    data = []
+    for i in sql:
+        data.append({
+            'stambuk' : i.nim,
+            'nama' : i.nama_mhs
+        })
+
+    return jsonify({
+        'data' :data
+    }), HTTP_200_OK
 
 # get all user
 @auth.get('/get-all')
