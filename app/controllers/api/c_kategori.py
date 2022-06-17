@@ -9,7 +9,6 @@ kategori = Blueprint('kategori', __name__, url_prefix='/kategori')
 
 @kategori.route('/jurusan', methods=['GET', 'POST'])
 def jurusan():
-
     if request.method == 'POST':
         nama_jurusan = request.json.get('jurusan', '')
 
@@ -39,6 +38,40 @@ def jurusan():
         return jsonify({
             'data': data
         }), HTTP_200_OK
+
+
+@kategori.route('/edit-jurusan', methods=['GET','PATCH'])
+def edit_jurusan():
+    id = request.args.get('id')
+    sql = JurusanModel.query.filter_by(id=id).first()
+
+    nama_jurusan = request.json.get('jurusan', '')
+
+    sql.nama_jurusan = nama_jurusan
+
+    db.session.commit()
+
+    return jsonify({
+        'id' : sql.id,
+        'jurusan' : sql.nama_jurusan
+    }), HTTP_201_CREATED
+
+
+@kategori.delete('jurusan/<int:id>')
+def delete_jurusan(id):
+    sqlUser = JurusanModel.query.filter_by(id=id).first()
+
+    if not sqlUser:
+        return jsonify({
+            'msg': 'data tidak ditemukan'
+        }), HTTP_404_NOT_FOUND
+
+    db.session.delete(sqlUser)
+    db.session.commit()
+
+    return jsonify({
+        'msg': 'data telah di hapus'
+    }), HTTP_204_NO_CONTENT
 
 
 @kategori.route('/semester', methods=['GET', 'POST'])
