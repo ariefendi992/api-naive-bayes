@@ -10,14 +10,14 @@ class NaiveBayes(object):
         self.table = table
         self.filter = filter
         
-    def prob_keputusan_layak(self):
+    def total_keputusan_layak(self):
         return self.table.query.filter(self.filter == 'layak').count()    
     
-    def prob_keputusan_tidak(self):
+    def total_keputusan_tidak(self):
         return self.table.query.filter(self.filter == 'tidak layak').count()    
     
     def total_data(self):
-        return self.prob_keputusan_layak() + self.prob_keputusan_tidak() 
+        return self.total_keputusan_layak() + self.total_keputusan_tidak() 
     
         
 class ProbAtribut(NaiveBayes):

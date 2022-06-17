@@ -277,54 +277,54 @@ def data_uji():
     p_pkh = ProbAtribut(UktModel, UktModel.keputusan, UktModel.status_pkh == pkh)
 
     p_tidak = {
-        'p_prodi_tidak' : round(p_prodi.prob_atr_tidak() / naive_b.prob_keputusan_tidak(), 2),
-        'p_sms_tidak' : round(p_sms.prob_atr_tidak() / naive_b.prob_keputusan_tidak(), 2),
-        'p_status_mhs_tidak' : round(p_status_mhs.prob_atr_tidak() / naive_b.prob_keputusan_tidak(), 2),
-        'p_kip_tidak' : round(p_kip.prob_atr_tidak() / naive_b.prob_keputusan_tidak(), 2),
-        'p_penghasilan_tidak' : round(p_penghasilan.prob_atr_tidak() / naive_b.prob_keputusan_tidak(), 2),
-        'p_tanggungan_tidak' : round(p_tanggungan.prob_atr_tidak() / naive_b.prob_keputusan_tidak(), 2), 
-        'p_pkh_tidak' : round(p_pkh.prob_atr_tidak() / naive_b.prob_keputusan_tidak(), 2), 
+        'p_prodi_tidak' : round(p_prodi.prob_atr_tidak() / naive_b.total_keputusan_tidak(), 2),
+        'p_sms_tidak' : round(p_sms.prob_atr_tidak() / naive_b.total_keputusan_tidak(), 2),
+        'p_status_mhs_tidak' : round(p_status_mhs.prob_atr_tidak() / naive_b.total_keputusan_tidak(), 2),
+        'p_kip_tidak' : round(p_kip.prob_atr_tidak() / naive_b.total_keputusan_tidak(), 2),
+        'p_penghasilan_tidak' : round(p_penghasilan.prob_atr_tidak() / naive_b.total_keputusan_tidak(), 2),
+        'p_tanggungan_tidak' : round(p_tanggungan.prob_atr_tidak() / naive_b.total_keputusan_tidak(), 2), 
+        'p_pkh_tidak' : round(p_pkh.prob_atr_tidak() / naive_b.total_keputusan_tidak(), 2), 
         
     }
     
     p_layak = {
-        'p_prodi_layak' : round(p_prodi.prob_atr_layak() / naive_b.prob_keputusan_layak(), 2),
-        'p_sms_layak' : round(p_sms.prob_atr_layak() / naive_b.prob_keputusan_layak(), 2),
-        'p_status_mhs_layak' : round(p_status_mhs.prob_atr_layak() / naive_b.prob_keputusan_layak(), 2),
-        'p_kip_layak' : round(p_kip.prob_atr_layak() / naive_b.prob_keputusan_layak(), 2), 
-        'p_penghasilan_layak' : round(p_penghasilan.prob_atr_layak() / naive_b.prob_keputusan_layak(), 2), 
-        'p_tanggungan_layak' : round(p_tanggungan.prob_atr_layak() / naive_b.prob_keputusan_layak(), 2), 
-        'p_pkh_layak' : round(p_pkh.prob_atr_layak() / naive_b.prob_keputusan_layak(), 2), 
+        'p_prodi_layak' : round(p_prodi.prob_atr_layak() / naive_b.total_keputusan_layak(), 2),
+        'p_sms_layak' : round(p_sms.prob_atr_layak() / naive_b.total_keputusan_layak(), 2),
+        'p_status_mhs_layak' : round(p_status_mhs.prob_atr_layak() / naive_b.total_keputusan_layak(), 2),
+        'p_kip_layak' : round(p_kip.prob_atr_layak() / naive_b.total_keputusan_layak(), 2), 
+        'p_penghasilan_layak' : round(p_penghasilan.prob_atr_layak() / naive_b.total_keputusan_layak(), 2), 
+        'p_tanggungan_layak' : round(p_tanggungan.prob_atr_layak() / naive_b.total_keputusan_layak(), 2), 
+        'p_pkh_layak' : round(p_pkh.prob_atr_layak() / naive_b.total_keputusan_layak(), 2), 
     }
     
     if 0 in p_layak.values():
         print('ada')
-        p_layak['p_prodi_layak'] = round((p_prodi.prob_atr_layak() + 1) / (naive_b.prob_keputusan_layak() + 7), 2)
-        p_layak['p_sms_layak'] = round((p_sms.prob_atr_layak() + 1) / (naive_b.prob_keputusan_layak() + 7), 2)
-        p_layak['p_status_mhs_layak'] = round((p_status_mhs.prob_atr_layak() + 1) / (naive_b.prob_keputusan_layak() + 7), 2)
-        p_layak['p_kip_layak'] = round((p_kip.prob_atr_layak() + 1) / (naive_b.prob_keputusan_layak() + 7), 2)
-        p_layak['p_penghasilan_layak'] = round((p_penghasilan.prob_atr_layak() + 1) / (naive_b.prob_keputusan_layak() + 7), 2)
-        p_layak['p_tanggungan_layak'] = round((p_tanggungan.prob_atr_layak() + 1) / (naive_b.prob_keputusan_layak() + 7),2)
-        p_layak['p_pkh_layak'] = round((p_pkh.prob_atr_layak() + 1) / (naive_b.prob_keputusan_layak() + 7), 2)
+        p_layak['p_prodi_layak'] = round((p_prodi.prob_atr_layak() + 1) / (naive_b.total_keputusan_layak() + 7), 2)
+        p_layak['p_sms_layak'] = round((p_sms.prob_atr_layak() + 1) / (naive_b.total_keputusan_layak() + 7), 2)
+        p_layak['p_status_mhs_layak'] = round((p_status_mhs.prob_atr_layak() + 1) / (naive_b.total_keputusan_layak() + 7), 2)
+        p_layak['p_kip_layak'] = round((p_kip.prob_atr_layak() + 1) / (naive_b.total_keputusan_layak() + 7), 2)
+        p_layak['p_penghasilan_layak'] = round((p_penghasilan.prob_atr_layak() + 1) / (naive_b.total_keputusan_layak() + 7), 2)
+        p_layak['p_tanggungan_layak'] = round((p_tanggungan.prob_atr_layak() + 1) / (naive_b.total_keputusan_layak() + 7),2)
+        p_layak['p_pkh_layak'] = round((p_pkh.prob_atr_layak() + 1) / (naive_b.total_keputusan_layak() + 7), 2)
     else: 
         p_layak
         
     if 0 in p_tidak.values():
-        p_tidak['p_prodi_tidak'] = round((p_prodi.prob_atr_tidak() + 1) / (naive_b.prob_keputusan_tidak() + 7), 2)
-        p_tidak['p_sms_tidak'] = round((p_sms.prob_atr_tidak() + 1) / (naive_b.prob_keputusan_tidak() + 7), 2)
-        p_tidak['p_status_mhs_tidak'] = round((p_status_mhs.prob_atr_tidak() + 1) / (naive_b.prob_keputusan_tidak() + 7), 2)
-        p_tidak['p_kip_tidak'] = round((p_kip.prob_atr_tidak() + 1) / (naive_b.prob_keputusan_tidak() + 7), 2)
-        p_tidak['p_penghasilan_tidak'] = round((p_penghasilan.prob_atr_tidak() + 1) / (naive_b.prob_keputusan_tidak() + 7), 2)
-        p_tidak['p_tanggungan_tidak'] = round((p_tanggungan.prob_atr_tidak() + 1) / (naive_b.prob_keputusan_tidak() + 7), 2)
-        p_tidak['p_pkh_tidak'] = round((p_pkh.prob_atr_tidak() + 1) / (naive_b.prob_keputusan_tidak() + 7), 2)
+        p_tidak['p_prodi_tidak'] = round((p_prodi.prob_atr_tidak() + 1) / (naive_b.total_keputusan_tidak() + 7), 2)
+        p_tidak['p_sms_tidak'] = round((p_sms.prob_atr_tidak() + 1) / (naive_b.total_keputusan_tidak() + 7), 2)
+        p_tidak['p_status_mhs_tidak'] = round((p_status_mhs.prob_atr_tidak() + 1) / (naive_b.total_keputusan_tidak() + 7), 2)
+        p_tidak['p_kip_tidak'] = round((p_kip.prob_atr_tidak() + 1) / (naive_b.total_keputusan_tidak() + 7), 2)
+        p_tidak['p_penghasilan_tidak'] = round((p_penghasilan.prob_atr_tidak() + 1) / (naive_b.total_keputusan_tidak() + 7), 2)
+        p_tidak['p_tanggungan_tidak'] = round((p_tanggungan.prob_atr_tidak() + 1) / (naive_b.total_keputusan_tidak() + 7), 2)
+        p_tidak['p_pkh_tidak'] = round((p_pkh.prob_atr_tidak() + 1) / (naive_b.total_keputusan_tidak() + 7), 2)
     else:
         p_tidak
     
     
     # P(Ci)
     # P(keputusan = layak)
-    p_keputusan_layak = naive_b.prob_keputusan_layak() / naive_b.total_data()
-    p_keputusan_tidak = naive_b.prob_keputusan_tidak() / naive_b.total_data()    
+    p_keputusan_layak = naive_b.total_keputusan_layak() / naive_b.total_data()
+    p_keputusan_tidak = naive_b.total_keputusan_tidak() / naive_b.total_data()    
     
     # P(Ci)
     # P(X | keputusan = layak)
@@ -368,6 +368,8 @@ def data_uji():
     
     return jsonify({
         'total_data' : naive_b.total_data(),
+        'total_layak' : naive_b.total_keputusan_layak(),
+        'total_tidak' : naive_b.total_keputusan_tidak(),
         'prob_keputusan_layak' : round(p_keputusan_layak, 2),
         'prob_keputusan_tidak' : round(p_keputusan_tidak, 2),
         'layak': p_layak,
