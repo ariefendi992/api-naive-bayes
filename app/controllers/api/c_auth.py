@@ -1,7 +1,8 @@
+from dataclasses import replace
 import datetime
 from fileinput import filename
-from flask import Blueprint, jsonify, request, send_file, url_for
-from sqlalchemy import exists
+from flask import Blueprint, jsonify, render_template, request, send_file, url_for
+from sqlalchemy import exists, null
 from app.lib.http_status_code import *
 from app.models.beasiswa_model import UktModel
 from app.models.user_model import UserModel, UserLoginModel
@@ -11,10 +12,17 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 # from app.models.upload_model import UploadPhotoModel
 # from app.models.kategori_model import JurusanModel
 import os
+from werkzeug.utils import secure_filename
+import app
 
-auth = Blueprint('auth', __name__, url_prefix='/auth')
+auth = Blueprint('auth', __name__, url_prefix='/auth', static_folder='../../static')
 
-UPLOAD_FOLDER = os.getcwd() + '/app/static/uploads'
+UPLOAD_FOLDER = os.getcwd() + '/app/static/images/'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # register
 @auth.post('/register')
@@ -115,6 +123,8 @@ def loginUser():
                 
             listUser = [] 
             
+            image_url =   url_for('static', filename='images/'+sqlUser.picture) if sqlUser.picture else None
+            
 
             return jsonify({
                 'data': {
@@ -122,6 +132,7 @@ def loginUser():
                     'stambuk': sqlUser.nim,
                     'nama': sqlUser.nama_mhs,
                     'prodi': sqlUser.prodi,
+                    'picture': image_url,
                     'token': access,
                     'refresh': refresh,
                     'expire': str(expireToken.seconds),
@@ -132,6 +143,37 @@ def loginUser():
     return jsonify({
         'error': 'Kesalahan pada autentikasi'
     }), HTTP_401_UNAUTHORIZED
+
+
+# update user foto by id
+@auth.patch('/update-picture')
+@auth.put('/update-picture')
+def update_profil_picture():
+    id = request.args.get('id')
+    sqlUser = UserModel.query.filter_by(id=id).first()
+
+    print('sqlUser =', sqlUser)
+
+    if not sqlUser:
+        return jsonify({
+            'msg': 'user tidak ada'
+        }), HTTP_404_NOT_FOUND
+
+    picture = request.files['file']
+
+    if picture and allowed_file(picture.filename):
+        filename = secure_filename(picture.filename)
+        path = os.path.join(UPLOAD_FOLDER, filename)
+        picture.save(path)
+        sqlUser.picture = picture.filename
+        db.session.commit()
+
+        return jsonify({
+            'id' : sqlUser.id,
+            'picture': sqlUser.picture
+        }), HTTP_200_OK
+
+
 
 
 # refresh token
@@ -262,6 +304,7 @@ def getOneUser():
     return jsonify({
         'nama': sqlQuery.nama_mhs,
         'nim': sqlQuery.nim,
+        'picture': sqlQuery.picture,
         'prodi': sqlQuery.prodi,
     }), HTTP_200_OK
 
@@ -384,3 +427,15 @@ def userNotExist():
 @auth.route('/logut', methods=['DELETE'])
 def logut():
     jti = get_jwt()['jti']
+
+
+@auth.route('/get-picture', methods=['GET'])
+def picutre():
+    sql = UserModel.query.filter_by(id=2).first()
+
+    pic_name = os.path.join(app.createApp().config['UPLOAD_FOLDER'], sql.picture)
+
+    # lokasi = os.getcwd()
+    # print(lokasi)
+    # print()
+    return render_template('index.html', pic_name=pic_name)

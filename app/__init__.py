@@ -1,11 +1,16 @@
 from flask import Flask
 from settings import Config
 from app.registers import registerApp
+import os
 
+
+UPLOAD_FOLDER = os.path.join('static', 'images')
 
 def createApp():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    
     
     registerApp(app)
     registerExtension(app)
