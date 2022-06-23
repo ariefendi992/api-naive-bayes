@@ -493,4 +493,33 @@ def fetch_data_testing():
         })     
      
     return jsonify(data), HTTP_200_OK
-        
+    
+
+# Hasil Data testing
+@ukt.route('/hasil-data-testing')
+def hasil_testing():
+    sqlQuery = db.session.query(
+        DataTestingUktModel, UserModel, JurusanModel, SemesterModel, PenghasilanModel, TanggunganModel)\
+        .join(UserModel, JurusanModel, SemesterModel, PenghasilanModel, TanggunganModel)
+
+    data = []
+    for ukt, user, jur, sms, peng, tang in sqlQuery:
+        data.append({
+            'id': ukt.id,
+            'nama': user.nama_mhs,
+            'nim': user.nim,
+            'prodi': jur.nama_jurusan,
+            'semester': sms.semester,
+            'status_mhs': ukt.status_mhs,
+            'terima_kip_bm': ukt.penerima_kip_bm,
+            'penghasilan_orang_tua': peng.ket,
+            'jml_tanggungan': tang.jml_tanggungan,
+            'pkh': ukt.status_pkh,
+            'keputusan': ukt.keputusan,
+        })
+
+    return jsonify({
+        'data': data,
+    }), HTTP_200_OK
+    
+

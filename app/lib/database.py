@@ -8,6 +8,9 @@ class CustomDB():
     
     def fetch_data(self):
         return self.table.query.all()
+
+    def count_data(self):
+        return self.table.query.count()
     
    
         
