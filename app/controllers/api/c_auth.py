@@ -1,10 +1,12 @@
 from dataclasses import replace
 import datetime
 from fileinput import filename
+import json
 from flask import Blueprint, jsonify, render_template, request, send_file, url_for
 from sqlalchemy import exists, null
 from app.lib.http_status_code import *
 from app.models.beasiswa_model import UktModel
+from app.models.pengguna_model import PenggunaModel
 from app.models.user_model import UserModel, UserLoginModel
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -439,3 +441,91 @@ def picutre():
     # print(lokasi)
     # print()
     return render_template('index.html', pic_name=pic_name)
+
+
+
+# ##################### admin akses web
+
+@auth.post('/regis-pengguna')
+@auth.get('/regis-pengguna')
+def pengguna_regis():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    status = request.json.get('status')
+
+    if len(password) < 6:
+        return jsonify({
+            'error': 'Password minimal 6 digit/karakter'
+        }), HTTP_400_BAD_REQUEST
+
+    if PenggunaModel.query.filter_by(username=username).first() is not None:
+        return jsonify({
+            'error': 'Username sudah terdaftar, silahkan login'
+        }), HTTP_409_CONFLICT
+
+    passwodHash = generate_password_hash(password)
+
+    sql = PenggunaModel(username=username, password=passwodHash, status=status)
+
+    db.session.add(sql)
+    db.session.commit()
+
+    return jsonify({
+        'id' : sql.id,
+        'username' : sql.username,
+        'status' : sql.status
+    }), HTTP_201_CREATED
+
+
+# admin pengguna login
+@auth.post('/login-pengguna')
+@auth.get('/login-pengguna')
+def pengguna_login():
+    user = request.json.get('username')
+    password = request.json.get('password')
+    status = request.json.get('status')
+
+    sql = PenggunaModel.query.filter_by(username=user).first()
+
+    if not sql:
+        return jsonify({
+            'error' : 'Username tidak ada'
+        }), HTTP_401_UNAUTHORIZED
+
+    if sql:
+        isPassCorect = check_password_hash(sql.password, password)
+
+        if not isPassCorect:
+            return jsonify({
+                'error': 'password salah! silahkan cek kembali'
+            }), HTTP_401_UNAUTHORIZED
+
+        isStatus = sql.status == status
+        if not isStatus:
+            return jsonify({
+                'error': "Ma'af anda tidak punya hak akses"
+            }), HTTP_401_UNAUTHORIZED
+
+        elif isPassCorect and isStatus:
+            return jsonify({
+                'id' : sql.id,
+                'username' : sql.username,
+                'status' : sql.status
+            }), HTTP_200_OK
+
+
+        # elif isPassCorect and status == 'admin':
+        #     return jsonify({
+        #         'id' : sql.id,
+        #         'username' : sql.username,
+        #         'status' : sql.status
+        #     }), HTTP_200_OK
+
+        # elif isPassCorect and status != 'admin':
+        #     return jsonify({
+        #         'error' : 'Hakses hanya utk admin'
+        #     }), HTTP_200_OK
+
+    return jsonify({
+        'error' : 'Kesalahan pada autentikasi'
+    }), HTTP_401_UNAUTHORIZED
