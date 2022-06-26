@@ -3,10 +3,11 @@ import datetime
 from fileinput import filename
 import json
 from flask import Blueprint, jsonify, render_template, request, send_file, url_for
-from sqlalchemy import exists, null
+from sqlalchemy import desc, exists, null
 from app.lib.http_status_code import *
 from app.models.beasiswa_model import UktModel
 from app.models.pengguna_model import PenggunaModel
+from app.models.upload_model import UploadPhotoModel
 from app.models.user_model import UserModel, UserLoginModel
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -76,7 +77,8 @@ def loginUser():
     nim = request.json.get('stambuk')
     password = request.json.get('password')
 
-    sqlUser = UserModel.query.filter_by(nim=nim).first()
+    sqlUser = UserModel.query.filter(UserModel.nim==nim).first()
+
     
    
     if not sqlUser:
@@ -98,7 +100,7 @@ def loginUser():
                 'nim': sqlUser.nim,
                 'nama': sqlUser.nama_mhs
             }
-            expireToken = datetime.timedelta(seconds=120)
+            expireToken = datetime.timedelta(minutes=60)
             print(expireToken.seconds)
             expireRefreshToken = datetime.timedelta(
                 days=30)
@@ -109,6 +111,9 @@ def loginUser():
 
             user_login = UserLoginModel.query.filter_by(
                 user_id=sqlUser.id).first()
+            
+            # select image profil
+            imageUser = UploadPhotoModel.query.filter(UploadPhotoModel.id_user == sqlUser.id).order_by(UploadPhotoModel.id.desc()).limit(1).all()
 
             if not user_login:
                 _userLogin = UserLoginModel(
@@ -124,8 +129,15 @@ def loginUser():
                 db.session.commit()
                 
             listUser = [] 
+
             
-            image_url =   url_for('static', filename='images/'+sqlUser.picture) if sqlUser.picture else None
+            # image_url =   url_for('static', filename='images/'+sqlUser.picture) if sqlUser.picture else None
+            nama_photo = None
+            for user in imageUser:
+                nama_photo = user.photo_name
+            print('nama photo ==== ', nama_photo)
+
+            image_url =   url_for('static', filename='images/'+ nama_photo) if nama_photo else None
             
 
             return jsonify({
@@ -302,11 +314,18 @@ def getOneUser():
 
     print(userIdentity.items())
     sqlQuery = UserModel.query.filter_by(id=userIdentity.get('id')).first()
+    imageUser = UploadPhotoModel.query.filter(UploadPhotoModel.id_user == userIdentity['id']).order_by(UploadPhotoModel.id.desc()).limit(1).all()
 
+    nama_photo = None
+    for user in imageUser:
+        nama_photo = user.photo_name
+    print('nama photo ==== ', nama_photo)
+
+    image_url =   url_for('static', filename='images/'+ nama_photo) if nama_photo else None
     return jsonify({
         'nama': sqlQuery.nama_mhs,
         'nim': sqlQuery.nim,
-        'picture': sqlQuery.picture,
+        'picture': image_url,
         'prodi': sqlQuery.prodi,
     }), HTTP_200_OK
 
@@ -529,3 +548,65 @@ def pengguna_login():
     return jsonify({
         'error' : 'Kesalahan pada autentikasi'
     }), HTTP_401_UNAUTHORIZED
+
+@auth.post('/check-password')
+def check_password():
+    id = request.args.get('id')
+    password = request.json.get('password')
+
+    if len(password) == 0:
+         return jsonify({
+            'msg' : '**inputan tidak boleh kosong.'
+        }), HTTP_404_NOT_FOUND
+
+    # if len(password) < 6:
+    #     return jsonify({
+    #         'msg' : 'Jumlah password tidak sesuai (minimal 6)'
+    #     }), HTTP_404_NOT_FOUND
+
+    sqlUser = UserModel.query.filter_by(id=id).first()
+
+  
+
+    if sqlUser:
+        is_pass = check_password_hash(sqlUser.password, password)
+        
+        if not is_pass and password:
+            return jsonify({
+                'msg' : 'password salah! harap periksa kembali.'
+            }), HTTP_404_NOT_FOUND
+        if is_pass:
+            return jsonify({
+                # 'id' : sqlUser.id,
+                # 'nama' : sqlUser.nama_mhs,
+                # 'msg' : 'Password sesuai'
+                'data': {
+                    'id' : sqlUser.id,
+                }
+                
+            }), HTTP_200_OK
+
+    return jsonify({
+        'msg' : 'password salah'
+    })
+
+
+
+@auth.route('/update-password', methods=['PUT'])
+def update_password():
+
+    id = request.args.get('id')
+    sqlUser = UserModel.query.filter_by(id=id).first()
+    if request.method == 'PUT':
+
+        password = request.json.get('password')
+
+        password_hash =  generate_password_hash(password)
+        sqlUser.password = password_hash
+
+        db.session.commit()
+      
+        return jsonify({
+            'id' : sqlUser.id,
+            'nama' : sqlUser.nama_mhs
+        }), HTTP_200_OK
