@@ -40,7 +40,7 @@ def jurusan():
         }), HTTP_200_OK
 
 
-@kategori.route('/edit-jurusan', methods=['GET','PATCH'])
+@kategori.route('/edit-jurusan', methods=['GET','PUT'])
 def edit_jurusan():
     id = request.args.get('id')
     sql = JurusanModel.query.filter_by(id=id).first()
@@ -107,6 +107,23 @@ def semester():
         }), HTTP_200_OK
 
 
+@kategori.delete('semester/<int:id>')
+def delete_semester(id):
+    sqlUser = SemesterModel.query.filter_by(id=id).first()
+
+    if not sqlUser:
+        return jsonify({
+            'msg': 'data tidak ditemukan'
+        }), HTTP_404_NOT_FOUND
+
+    db.session.delete(sqlUser)
+    db.session.commit()
+
+    return jsonify({
+        'msg': 'data telah di hapus'
+    }), HTTP_204_NO_CONTENT
+
+
 @kategori.route('/penghasilan', methods=['POST', 'GET'])
 def penghasilan():
     if request.method == 'POST':
@@ -125,7 +142,7 @@ def penghasilan():
             'id': simpanData.id,
             'penghasilan': simpanData.jml_penghasilan,
             'keterangan': simpanData.ket
-        })
+        }), HTTP_201_CREATED
 
     else:
         sqlQuery = PenghasilanModel.query.all()
@@ -142,6 +159,22 @@ def penghasilan():
         return jsonify({
             'data': data
         }), HTTP_200_OK
+
+@kategori.delete('penghasilan/<int:id>')
+def delete_penghasilan(id):
+    sqlUser = PenghasilanModel.query.filter_by(id=id).first()
+
+    if not sqlUser:
+        return jsonify({
+            'msg': 'data tidak ditemukan'
+        }), HTTP_404_NOT_FOUND
+
+    db.session.delete(sqlUser)
+    db.session.commit()
+
+    return jsonify({
+        'msg': 'data telah di hapus'
+    }), HTTP_204_NO_CONTENT
         
 # jml tanggungan
 @kategori.route('/tanggungan', methods=['GET','POST'])
@@ -157,7 +190,7 @@ def kat_tanggungan():
         return jsonify({
                 'id': data.id,
                 'tanggungan' : data.jml_tanggungan
-            })
+            }), HTTP_201_CREATED
     else: 
         data = CustomDB(TanggunganModel)
         
@@ -172,7 +205,21 @@ def kat_tanggungan():
             'data' : result
         }), HTTP_200_OK
 
-    
+@kategori.delete('tanggungan/<int:id>')
+def delete_tanggungan(id):
+    sqlUser = TanggunganModel.query.filter_by(id=id).first()
+
+    if not sqlUser:
+        return jsonify({
+            'msg': 'data tidak ditemukan'
+        }), HTTP_404_NOT_FOUND
+
+    db.session.delete(sqlUser)
+    db.session.commit()
+
+    return jsonify({
+        'msg': 'data telah di hapus'
+    }), HTTP_204_NO_CONTENT
         
         
     

@@ -1,3 +1,4 @@
+from webbrowser import get
 from flask import Blueprint, jsonify, request
 from app.lib.algoritma.algoritma_nb import NaiveBayes, ProbAtribut
 from app.lib.http_status_code import *
@@ -521,5 +522,34 @@ def hasil_testing():
     return jsonify({
         'data': data,
     }), HTTP_200_OK
-    
+
+# get hasil ukt testing by id
+@ukt.route('hasil-ukt-byid')
+def ukt_testing_by_id():
+    id_user = request.args.get('id')
+    # sql = DataTestingUktModel.query.all()
+    sqlQuery = db.session.query(
+        DataTestingUktModel, UserModel, JurusanModel, SemesterModel, PenghasilanModel, TanggunganModel)\
+        .join(UserModel, JurusanModel, SemesterModel, PenghasilanModel, TanggunganModel).filter(DataTestingUktModel.id_user == id_user)
+
+    data = []
+    for ukt, user, jur, sms, peng, tang in sqlQuery:
+        data.append({
+            'id': ukt.id,
+            'nama': user.nama_mhs,
+            'nim': user.nim,
+            'prodi': jur.nama_jurusan,
+            'semester': sms.semester,
+            'status_mhs': ukt.status_mhs,
+            'terima_kip_bm': ukt.penerima_kip_bm,
+            'penghasilan_orang_tua': peng.ket,
+            'jml_tanggungan': tang.jml_tanggungan,
+            'pkh': ukt.status_pkh,
+            'keputusan': ukt.keputusan,
+        })
+
+    return jsonify({
+        'data': data,
+    }), HTTP_200_OK
+
 

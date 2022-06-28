@@ -12,5 +12,6 @@ class CustomDB():
     def count_data(self):
         return self.table.query.count()
     
+    
    
         
