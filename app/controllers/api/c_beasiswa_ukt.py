@@ -6,7 +6,7 @@ from app.models.beasiswa_model import DataTestingUktModel, UktModel
 from app.models.user_model import UserLoginModel, UserModel
 from app.models.kategori_model import *
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.lib.algoritma.algoritma_naive_bayes import CountUkt
+# from app.lib.algoritma.algoritma_naive_bayes import CountUkt
 from app.models.kategori_model import PenghasilanModel
 from app.lib.database import CustomDB
 
@@ -210,14 +210,14 @@ def editUktData():
     status_pkh = request.json.get('pkh_kks')
     keputusan = request.json.get('keputusan')
 
-    sqlQuery.nik = nik,
-    sqlQuery.id_prodi = prodi,
-    sqlQuery.id_semester = id_semester,
-    sqlQuery.status_mhs = status_mhs,
-    sqlQuery.penerima_kip = penerima_kip,
-    sqlQuery.id_penghasilan = id_penghasilan,
-    sqlQuery.id_tanggungan = id_tanggungan,
-    sqlQuery.status_pkh = status_pkh,
+    sqlQuery.nik = nik
+    sqlQuery.id_prodi = prodi
+    sqlQuery.id_semester = id_semester
+    sqlQuery.status_mhs = status_mhs
+    sqlQuery.penerima_kip = penerima_kip
+    sqlQuery.id_penghasilan = id_penghasilan
+    sqlQuery.id_tanggungan = id_tanggungan
+    sqlQuery.status_pkh = status_pkh
     sqlQuery.keputusan = keputusan
 
     db.session.commit()
@@ -329,16 +329,14 @@ def data_uji():
     
     # P(Ci)
     # P(X | keputusan = layak)
-    # p_x_keputusan_layak = p_layak['p_prodi_layak'] * p_layak['p_sms_layak'] * p_layak['p_status_mhs_layak'] * \
-    #                   p_layak['p_penghasilan_layak'] * p_layak['p_tanggungan_layak'] * p_layak['p_pkh_layak']
     p_x_keputusan_layak = round(p_layak['p_prodi_layak'], 2) * round(p_layak['p_sms_layak'], 2) * round(p_layak['p_status_mhs_layak'], 2) * \
-                      round(p_layak['p_penghasilan_layak'],2) * round(p_layak['p_tanggungan_layak'], 2) * round(p_layak['p_pkh_layak'], 2)
+                        round(p_layak['p_kip_layak']) *  round(p_layak['p_penghasilan_layak'],2) * round(p_layak['p_tanggungan_layak'], 2) * \
+                        round(p_layak['p_pkh_layak'], 2)
    
     # P(X | keputusan = tidak)
-    # p_x_keputusan_tidak = p_tidak['p_prodi_tidak'] * p_tidak['p_sms_tidak'] * p_tidak['p_status_mhs_tidak'] * \
-    #                   p_tidak['p_penghasilan_tidak'] * p_tidak['p_tanggungan_tidak'] * p_tidak['p_pkh_tidak']
     p_x_keputusan_tidak = round(p_tidak['p_prodi_tidak'], 2) * round(p_tidak['p_sms_tidak'], 2) * round(p_tidak['p_status_mhs_tidak'], 2) * \
-                      round(p_tidak['p_penghasilan_tidak'],2) * round(p_tidak['p_tanggungan_tidak'], 2) * round(p_tidak['p_pkh_tidak'], 2)
+                        round(p_tidak['p_kip_tidak']) * round(p_tidak['p_penghasilan_tidak'],2) * round(p_tidak['p_tanggungan_tidak'], 2) * \
+                        round(p_tidak['p_pkh_tidak'], 2)
     
     # P(X|Ci)*P(Ci)
     # P(X | keputusan = layak * P(Ci) keputusan = layak
@@ -532,24 +530,28 @@ def ukt_testing_by_id():
         DataTestingUktModel, UserModel, JurusanModel, SemesterModel, PenghasilanModel, TanggunganModel)\
         .join(UserModel, JurusanModel, SemesterModel, PenghasilanModel, TanggunganModel).filter(DataTestingUktModel.id_user == id_user)
 
-    data = []
-    for ukt, user, jur, sms, peng, tang in sqlQuery:
-        data.append({
-            'id': ukt.id,
-            'nama': user.nama_mhs,
-            'nim': user.nim,
-            'prodi': jur.nama_jurusan,
-            'semester': sms.semester,
-            'status_mhs': ukt.status_mhs,
-            'terima_kip_bm': ukt.penerima_kip_bm,
-            'penghasilan_orang_tua': peng.ket,
-            'jml_tanggungan': tang.jml_tanggungan,
-            'pkh': ukt.status_pkh,
-            'keputusan': ukt.keputusan,
-        })
+    if sqlQuery:
+        data = []
+        for ukt, user, jur, sms, peng, tang in sqlQuery:
+            data.append({
+                'id': ukt.id,
+                'nama': user.nama_mhs,
+                'nim': user.nim,
+                'prodi': jur.nama_jurusan,
+                'semester': sms.semester,
+                'status_mhs': ukt.status_mhs,
+                'terima_kip_bm': ukt.penerima_kip_bm,
+                'penghasilan_orang_tua': peng.ket,
+                'jml_tanggungan': tang.jml_tanggungan,
+                'pkh': ukt.status_pkh,
+                'keputusan': ukt.keputusan,
+            })
 
-    return jsonify({
-        'data': data,
-    }), HTTP_200_OK
+        return jsonify({
+            'data': data,
+        }), HTTP_200_OK
+
+    else:
+        return jsonify({'error': 'Data tidak ada'}), HTTP_404_NOT_FOUND
 
 

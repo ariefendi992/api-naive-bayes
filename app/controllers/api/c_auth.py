@@ -609,4 +609,4 @@ def update_password():
         return jsonify({
             'id' : sqlUser.id,
             'nama' : sqlUser.nama_mhs
-        }), HTTP_200_OK
+        }), HTTP_201_CREATED
