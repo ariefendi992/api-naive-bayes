@@ -12,7 +12,7 @@ class UserModel(db.Model):
     prodi = db.Column(db.String(128), nullable=False)
     jenis_kelamin = db.Column(db.Enum('laki-laki', 'perempuan'))
     email = db.Column(db.String(128), nullable=False)
-    picture = db.Column(db.String(128), nullable=True)
+    # picture = db.Column(db.String(128), nullable=True)
     password = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=utcMakassar())
     updated_at = db.Column(db.DateTime, onupdate=utcMakassar())

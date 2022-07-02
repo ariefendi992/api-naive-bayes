@@ -2,7 +2,9 @@ from dataclasses import replace
 import datetime
 from fileinput import filename
 import json
+from turtle import delay
 from flask import Blueprint, jsonify, render_template, request, send_file, url_for
+from requests import patch
 from sqlalchemy import desc, exists, null
 from app.lib.http_status_code import *
 from app.models.beasiswa_model import UktModel
@@ -128,16 +130,20 @@ def loginUser():
                 user_login.expire_refresh_at = expireRefreshToken
                 db.session.commit()
                 
-            listUser = [] 
-
+            # delete imageUser =
+            imageUserDel = UploadPhotoModel.query.filter_by(id_user=sqlUser.id).first()
             
             # image_url =   url_for('static', filename='images/'+sqlUser.picture) if sqlUser.picture else None
-            nama_photo = None
+            nama_photo = ''
             for user in imageUser:
                 nama_photo = user.photo_name
             print('nama photo ==== ', nama_photo)
-
-            image_url =   url_for('static', filename='images/'+ nama_photo) if nama_photo else None
+            file = os.path.exists(f'app/static/images/{nama_photo}')
+            if file == False:
+                db.session.delete(imageUserDel)
+                db.session.commit()
+                
+            image_url = url_for('static', filename='images/'+ nama_photo) if nama_photo else None
             
 
             return jsonify({
@@ -146,7 +152,7 @@ def loginUser():
                     'stambuk': sqlUser.nim,
                     'nama': sqlUser.nama_mhs,
                     'prodi': sqlUser.prodi,
-                    'picture': image_url,
+                    'picture':  image_url if file == True else None,
                     'token': access,
                     'refresh': refresh,
                     'expire': str(expireToken.seconds),
@@ -315,17 +321,25 @@ def getOneUser():
     print(userIdentity.items())
     sqlQuery = UserModel.query.filter_by(id=userIdentity.get('id')).first()
     imageUser = UploadPhotoModel.query.filter(UploadPhotoModel.id_user == userIdentity['id']).order_by(UploadPhotoModel.id.desc()).limit(1).all()
+    
+    imageUserDel = UploadPhotoModel.query.filter_by(id_user=userIdentity.get('id')).first()
 
     nama_photo = None
     for user in imageUser:
         nama_photo = user.photo_name
     print('nama photo ==== ', nama_photo)
+    file = os.path.exists(f'app/static/images/{nama_photo}')
+    # if file == False:
+    #     db.session.delete(imageUserDel)
+    #     db.session.commit()
 
-    image_url =   url_for('static', filename='images/'+ nama_photo) if nama_photo else None
+    # image_url =   url_for('static', filename='images/'+ nama_photo) if nama_photo else None
+    image_url = url_for('static', filename='images/'+ nama_photo) if nama_photo else None
+
     return jsonify({
         'nama': sqlQuery.nama_mhs,
         'nim': sqlQuery.nim,
-        'picture': image_url,
+        'picture': image_url if file == True else None,
         'prodi': sqlQuery.prodi,
     }), HTTP_200_OK
 
