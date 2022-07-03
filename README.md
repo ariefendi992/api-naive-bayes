@@ -11,7 +11,7 @@ Untuk versi rilisan terakhir dari [Halaman Rilis](https://github.com/ariefendi99
     - ubuntu: python3 -m venv env
     
 - Install Library:
-    -pip install -r requirements.txt
+    - pip install -r requirements.txt
 
 #### Project API 
 - Menggunakan Python Flask Framework
