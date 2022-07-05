@@ -329,21 +329,23 @@ def data_uji():
     
     # P(Ci)
     # P(X | keputusan = layak)
-    p_x_keputusan_layak = round(p_layak['p_prodi_layak'], 2) * round(p_layak['p_sms_layak'], 2) * round(p_layak['p_status_mhs_layak'], 2) * \
-                        round(p_layak['p_kip_layak']) *  round(p_layak['p_penghasilan_layak'],2) * round(p_layak['p_tanggungan_layak'], 2) * \
-                        round(p_layak['p_pkh_layak'], 2)
+    p_x_keputusan_layak = p_layak['p_prodi_layak'] * p_layak['p_sms_layak'] * p_layak['p_status_mhs_layak'] * \
+                        p_layak['p_kip_layak']*  p_layak['p_penghasilan_layak']* p_layak['p_tanggungan_layak'] * \
+                        p_layak['p_pkh_layak']
    
     # P(X | keputusan = tidak)
-    p_x_keputusan_tidak = round(p_tidak['p_prodi_tidak'], 2) * round(p_tidak['p_sms_tidak'], 2) * round(p_tidak['p_status_mhs_tidak'], 2) * \
-                        round(p_tidak['p_kip_tidak']) * round(p_tidak['p_penghasilan_tidak'],2) * round(p_tidak['p_tanggungan_tidak'], 2) * \
-                        round(p_tidak['p_pkh_tidak'], 2)
+    p_x_keputusan_tidak = p_tidak['p_prodi_tidak'] * p_tidak['p_sms_tidak'] * p_tidak['p_status_mhs_tidak'] * \
+                        p_tidak['p_kip_tidak'] * p_tidak['p_penghasilan_tidak'] * p_tidak['p_tanggungan_tidak'] * \
+                        p_tidak['p_pkh_tidak']
     
+    print(p_x_keputusan_layak)
+    print(p_x_keputusan_tidak)
     # P(X|Ci)*P(Ci)
     # P(X | keputusan = layak * P(Ci) keputusan = layak
-    p_x_layak = p_x_keputusan_layak * p_x_keputusan_layak
+    p_x_layak = p_x_keputusan_layak * p_keputusan_layak
     
     # P(X | keputusan = tidak * P(Ci) keputusan tidak
-    p_x_tidak = p_x_keputusan_tidak * p_x_keputusan_tidak
+    p_x_tidak = p_x_keputusan_tidak * p_keputusan_tidak
     
     # 
     if p_x_layak > p_x_tidak:
@@ -373,11 +375,13 @@ def data_uji():
         'prob_keputusan_tidak' : round(p_keputusan_tidak, 2),
         'layak': p_layak,
         'tidak': p_tidak,
-        'p_x_kep_layak': format(p_x_layak, '.12f'),
-        'p_x_kep_tidak': format(p_x_tidak, '.12f'),
+        # 'p_x_kep_layak': p_x_layak,
+        # 'p_x_kep_tidak': p_x_tidak,
+        'p_x_kep_layak': format(p_x_layak, '.8f'),
+        'p_x_kep_tidak': format(p_x_tidak, '.8f'),
         'keputusan' : msg,
-        'persen_layak' : round(persen, 2),
-        'persen_tidak' : round(hitung, 2),
+        'persen_layak' : round(hitung, 2),
+        'persen_tidak' : round(persen, 2),
     }), HTTP_200_OK    
     
 
