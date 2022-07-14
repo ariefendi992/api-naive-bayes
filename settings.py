@@ -25,6 +25,16 @@ class Config(object):
     JWT_SECRET_KEY = str(os.getenv('JWT_SECRET_KEY'))
     JWT_ACCESS_TOKEN_EXPIRES = str(os.getenv('JWT_ACCESS_TOKEN_EXPIRES'))
 
+    # MAIL Config
+    MAIL_SERVER = str(os.getenv('mail_server'))
+    MAIL_PORT = str(os.getenv('mail_port'))
+    MAIL_USE_SSL = str(os.getenv('mail_ssl'))
+    MAIL_USERNAME = str(os.getenv('mail_username'))
+    MAIL_PASSWORD = str(os.getenv('mail_password'))
+    
+    
     # uploads folder
     # UPLOAD_FOLDER = str(os.getenv('UPLOAD_FOLDER'))
     print(SQLALCHEMY_DATABASE_URI)
+
+

@@ -24,12 +24,13 @@ def createApp():
 
 
 def registerExtension(app):
-    from app.extensions import swagger, db, migrate, jwtManager
+    from app.extensions import swagger, db, migrate, jwtManager, mail
 
     swagger.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
     jwtManager.init_app(app)
+    mail.init_app(app)
 
 
 app = createApp()

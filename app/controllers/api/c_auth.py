@@ -14,10 +14,10 @@ from app.models.user_model import UserModel, UserLoginModel
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity, get_jwt
-# from app.models.upload_model import UploadPhotoModel
-# from app.models.kategori_model import JurusanModel
 import os
 from werkzeug.utils import secure_filename
+from flask_mail import Message
+from app.extensions import mail
 import app
 
 auth = Blueprint('auth', __name__, url_prefix='/auth', static_folder='../../static')
@@ -54,12 +54,23 @@ def registerUser():
             'error': 'Nim sudah terdaftar, silahkan login'
         }), HTTP_409_CONFLICT
 
+    if UserModel.query.filter_by(email=email).first() is not None:
+        return jsonify({
+            'error': 'Email sudah digunakan, silahkan gunakan email yang lain.'
+        }), HTTP_409_CONFLICT
     passwordHash = generate_password_hash(password)
 
     sql = UserModel(nim=nim, nama_mhs=nama, prodi=prodi,
                     jenis_kelamin=gender, email=email, password=passwordHash)
     db.session.add(sql)
     db.session.commit()
+
+    subject = 'Registrasi Akun'
+    msg_body = f'Selamat anda telah berhasil melakukan registrasi akun. \
+                 \nSilahkan Login dengan menggunakan Stambuk dan Password\n\n -Detail Akun : \
+                 \nStambuk : {nim}\nNama : {nama}\nPassword : {password} '
+    msg = Message(subject=subject, sender='admin@beasiswa-tuim.site', recipients=[email], body=msg_body)
+    mail.send(msg)
 
     return jsonify({
         'id': sql.id,
