@@ -34,7 +34,6 @@ class DataTestingUktModel(db.Model):
         'tb_jurusan.id'), nullable=False)
     id_semester = db.Column(db.Integer, db.ForeignKey(
         'tb_semester.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
-    status_mhs = db.Column(db.String(32), nullable=False)
     penerima_kip_bm = db.Column(db.String(32), nullable=False)
     id_penghasilan = db.Column(db.Integer, db.ForeignKey(
         'tb_penghasilan.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
