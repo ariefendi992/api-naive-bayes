@@ -368,7 +368,6 @@ def getUserById():
         'nim': sqlQuery.nim,
         'gender': sqlQuery.jenis_kelamin,
         'email': sqlQuery.email,
-        'picture': sqlQuery.picture,
 
     }), HTTP_200_OK
 
