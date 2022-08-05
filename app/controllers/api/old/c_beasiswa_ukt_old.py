@@ -242,7 +242,7 @@ def data_uji():
     p_sms = ProbAtribut(UktModel, UktModel.keputusan, UktModel.id_semester == id_semester)
     p_kip = ProbAtribut(UktModel, UktModel.keputusan, UktModel.penerima_kip_bm == status_kip)
     p_penghasilan = ProbAtribut(UktModel, UktModel.keputusan, UktModel.id_penghasilan == id_penghasilan)
-    p_tanggungan = ProbAtribut(UktModel, UktModel.keputusan, UktModel.id_tanggungan == id_tanggungan)
+    p_tanggungan = ProbAtribut(UktModel, UktModel.keputusan, UktModel.id_penghasilan == id_tanggungan)
     p_pkh = ProbAtribut(UktModel, UktModel.keputusan, UktModel.status_pkh == pkh)
 
     p_tidak = {
