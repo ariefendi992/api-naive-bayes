@@ -337,6 +337,8 @@ def data_uji():
         'total_tidak' : naive_b.total_keputusan_tidak(),
         'prob_keputusan_layak' : round(p_keputusan_layak, 2),
         'prob_keputusan_tidak' : round(p_keputusan_tidak, 2),
+        'total_p_x_keputusan_layak' : format(p_x_keputusan_layak, '.8f'),
+        'total_p_x_keputusan_tidak' : format(p_x_keputusan_tidak, '.8f'),
         'layak': p_layak,
         'tidak': p_tidak,
         # 'p_x_kep_layak': p_x_layak,
