@@ -348,9 +348,12 @@ def getOneUser():
     image_url = url_for('static', filename='images/'+ nama_photo) if nama_photo else None
 
     return jsonify({
+        'id' : sqlQuery.id,
         'nama': sqlQuery.nama_mhs,
-        'nim': sqlQuery.nim,
+        'stambuk': sqlQuery.nim,
         'picture': image_url if file == True else None,
+        'email' : sqlQuery.email,
+        'gender' : sqlQuery.jenis_kelamin.capitalize(),
         'prodi': sqlQuery.prodi,
     }), HTTP_200_OK
 
@@ -388,17 +391,18 @@ def editUser():
 
     stambuk = request.json.get('stambuk')
     nama = request.json.get('nama')
+    prodi = request.json.get('prodi')
     gender = request.json.get('gender')
     email = request.json.get('email')
-    password = request.json.get('password')
+    # password = request.json.get('password')
 
-    passwordHash = generate_password_hash(password)
+    # passwordHash = generate_password_hash(password)
 
     sqlUser.nim = stambuk
     sqlUser.nama_mhs = nama
     sqlUser.jenis_kelamin = gender
     sqlUser.email = email
-    sqlUser.password = passwordHash
+    # sqlUser.password = passwordHash
 
     db.session.commit()
 
@@ -406,6 +410,7 @@ def editUser():
         'id': sqlUser.id,
         'stambuk': sqlUser.nim,
         'nama': sqlUser.nama_mhs,
+        'prodi' :sqlUser.prodi,
         'gender': sqlUser.jenis_kelamin,
         'email': sqlUser.email
     }), HTTP_201_CREATED
