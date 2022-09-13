@@ -11,11 +11,11 @@ class UserModel(db.Model):
     nama_mhs = db.Column(db.String(128), nullable=False)
     prodi = db.Column(db.String(128), nullable=False)
     jenis_kelamin = db.Column(db.String(32), nullable=True)
-    # jenis_kelamin = db.Column(db.Enum('laki-laki', 'perempuan'))
-    
+    # jenis_kelamin = db.Column(db.Enum('laki-laki', 'perempuan'))    
     email = db.Column(db.String(128), nullable=False)
     # picture = db.Column(db.String(128), nullable=True)
     berkas = db.Column(db.String(256), nullable=True)
+    status_berkas = db.Column(db.String(2), nullable=True, default='0')
     password = db.Column(db.String(256), nullable=False)
     created_at = db.Column(db.DateTime, default=utcMakassar())
     updated_at = db.Column(db.DateTime, onupdate=utcMakassar())

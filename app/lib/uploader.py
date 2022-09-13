@@ -31,11 +31,12 @@ def uploads(f, nama_user):
         elif fileExt == 'pdf':
             encFile = hashlib.md5(get_secure_filename(
                 f.filename).encode('utf-8')).hexdigest()
-            pathFile = UPLOAD_FOLDER+'/doc'+encFile+'.' + fileExt
+            pathFile = UPLOAD_FOLDER+'/doc/'+ nama_user +'_' +encFile+'.' + fileExt
             f.save(pathFile)
             return {
                 'status': 'ok',
-                'path_file': pathFile
+                'path_file': pathFile,
+                'berkas_name' : nama_user +'_' +encFile+'.' + fileExt
             }
         else:
             return {
