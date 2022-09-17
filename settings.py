@@ -34,7 +34,7 @@ class Config(object):
     
     
     # uploads folder
-    # UPLOAD_FOLDER = str(os.getenv('UPLOAD_FOLDER'))
+    UPLOAD_FOLDER = str(os.getenv('UPLOAD_FOLDER'))
     print(SQLALCHEMY_DATABASE_URI)
 
 

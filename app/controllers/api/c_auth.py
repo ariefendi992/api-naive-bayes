@@ -1,11 +1,6 @@
-from dataclasses import replace
 import datetime
-from fileinput import filename
-import json
-from turtle import delay
-from flask import Blueprint, jsonify, render_template, request, send_file, url_for
-from requests import patch
-from sqlalchemy import desc, exists, null
+from flask import Blueprint, jsonify, render_template, request, send_from_directory, url_for
+from sqlalchemy import exists
 from app.lib.http_status_code import *
 from app.models.beasiswa_model import UktModel
 from app.models.pengguna_model import PenggunaModel
@@ -155,6 +150,8 @@ def loginUser():
                 db.session.commit()
                 
             image_url = url_for('static', filename='images/'+ nama_photo) if nama_photo else None
+            file_name = sqlUser.berkas
+            file_url = url_for('static', filename='doc/'+ file_name)
             
 
             return jsonify({
@@ -163,8 +160,8 @@ def loginUser():
                     'stambuk': sqlUser.nim,
                     'nama': sqlUser.nama_mhs,
                     'prodi': sqlUser.prodi,
-                    'picture':  image_url if file == True else None,
-                    'berkas' : sqlUser.berkas,
+                    'picture': image_url if file == True else None,
+                    'berkas' : file_url,
                     'status_berkas' : sqlUser.status_berkas,
                     'token': access,
                     'refresh': refresh,

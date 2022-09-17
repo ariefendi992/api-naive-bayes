@@ -4,17 +4,17 @@ from app.registers import registerApp
 import os
 
 
-UPLOAD_FOLDER = os.path.join('static', 'images')
 
 def createApp():
+    # UPLOAD_FOLDER = '/app/static/'
     app = Flask(__name__)
     app.config.from_object(Config)
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     
     
     registerApp(app)
     registerExtension(app)
-    from app.extensions import db, migrate
+    # from app.extensions import db, migrate
     
     @app.get('/')
     def index():
