@@ -164,6 +164,8 @@ def loginUser():
                     'nama': sqlUser.nama_mhs,
                     'prodi': sqlUser.prodi,
                     'picture':  image_url if file == True else None,
+                    'berkas' : sqlUser.berkas,
+                    'status_berkas' : sqlUser.status_berkas,
                     'token': access,
                     'refresh': refresh,
                     'expire': str(expireToken.seconds),
@@ -355,6 +357,8 @@ def getOneUser():
         'email' : sqlQuery.email,
         'gender' : sqlQuery.jenis_kelamin.capitalize(),
         'prodi': sqlQuery.prodi,
+        'berkas' : sqlQuery.berkas,
+        'status_berkas' : sqlQuery.status_berkas
     }), HTTP_200_OK
 
 
