@@ -339,9 +339,9 @@ def getOneUser():
         nama_photo = user.photo_name
     print('nama photo ==== ', nama_photo)
     file = os.path.exists(f'app/static/images/{nama_photo}')
-    # if file == False:
-    #     db.session.delete(imageUserDel)
-    #     db.session.commit()
+    if file == False:
+        db.session.delete(imageUserDel)
+        db.session.commit()
 
     # image_url =   url_for('static', filename='images/'+ nama_photo) if nama_photo else None
     image_url = url_for('static', filename='images/'+ nama_photo) if nama_photo else None

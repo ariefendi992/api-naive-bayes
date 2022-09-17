@@ -402,7 +402,7 @@ def hasil_testing():
     }), HTTP_200_OK
 
 # get hasil ukt testing by id
-@ukt.route('hasil-ukt-byid')
+@ukt.route('/hasil-ukt-byid')
 def ukt_testing_by_id():
     id_user = request.args.get('id')
     # sql = DataTestingUktModel.query.all()
