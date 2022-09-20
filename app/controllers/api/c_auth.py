@@ -151,7 +151,7 @@ def loginUser():
                 
             image_url = url_for('static', filename='images/'+ nama_photo) if nama_photo else None
             file_name = sqlUser.berkas
-            file_url = url_for('static', filename='doc/'+ file_name)
+            file_url = url_for('static', filename='doc/'+ file_name) if file_name else None
             
 
             return jsonify({
@@ -265,6 +265,8 @@ def getAllUser():
             'nama': i.nama_mhs,
             'gender': i.jenis_kelamin,
             'email': i.email,
+            'berkas': i.berkas,
+            'status_berkas' : i.status_berkas,
             'created_at': str(i.created_at),
             'updated_at': str(i.updated_at)
         })
@@ -283,6 +285,31 @@ def getAllUser():
         'meta': meta,
     }), HTTP_200_OK
 
+# get all without pagination
+@auth.get('/fetch-all-not-pagination')
+# @jwt_required()
+def fetchAllUser():
+    # current_user = get_jwt_identity()
+
+    sqlQuery = db.session.query(UserModel).order_by(UserModel.berkas.desc())
+
+    data = []
+    for i in sqlQuery:
+        data.append({
+            'id': i.id,
+            'stambuk': i.nim,
+            'nama': i.nama_mhs,
+            'gender': i.jenis_kelamin,
+            'email': i.email,
+            'berkas': i.berkas,
+            'status_berkas' : i.status_berkas,
+            'created_at': str(i.created_at),
+            'updated_at': str(i.updated_at)
+        })
+        
+    return jsonify({
+        'data': data,
+    }), HTTP_200_OK
 
 # get user login
 @auth.get('/user-login')
@@ -332,16 +359,16 @@ def getOneUser():
     sqlQuery = UserModel.query.filter_by(id=userIdentity.get('id')).first()
     imageUser = UploadPhotoModel.query.filter(UploadPhotoModel.id_user == userIdentity['id']).order_by(UploadPhotoModel.id.desc()).limit(1).all()
     
-    imageUserDel = UploadPhotoModel.query.filter_by(id_user=userIdentity.get('id')).first()
+    # imageUserDel = UploadPhotoModel.query.filter_by(id_user=userIdentity.get('id')).first()
 
     nama_photo = None
     for user in imageUser:
         nama_photo = user.photo_name
     print('nama photo ==== ', nama_photo)
     file = os.path.exists(f'app/static/images/{nama_photo}')
-    if file == False:
-        db.session.delete(imageUserDel)
-        db.session.commit()
+    # if file == False:
+    #     db.session.delete(imageUserDel)
+    #     db.session.commit()
 
     # image_url =   url_for('static', filename='images/'+ nama_photo) if nama_photo else None
     image_url = url_for('static', filename='images/'+ nama_photo) if nama_photo else None
@@ -641,4 +668,16 @@ def update_password():
             'nama' : sqlUser.nama_mhs
         }), HTTP_201_CREATED
         
-        
+@auth.route('/verify-file', methods=['PUT','PATCH','GET'])
+def verify_file(): 
+    id = request.args.get('id')
+    sql_user = UserModel.query.filter_by(id=id).first()
+    
+    
+    sql_user.status_berkas = '1'
+    
+    db.session.commit()
+    
+    return jsonify({
+        'msg' : 'berkas telah di setujui'
+    }),HTTP_200_OK      

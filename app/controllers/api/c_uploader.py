@@ -44,10 +44,10 @@ def upload_berkas(id):
     upload_data = uploads(f, nama_user)
     if f is None:
         return jsonify({'msg' : 'Please select files.'}), HTTP_500_INTERNAL_SERVER_ERROR
-    if sqlQuery.berkas:
-            return jsonify({
-                'msg' : 'File is already exists.'
-            }), HTTP_409_CONFLICT
+    # if sqlQuery.berkas ==:
+    #         return jsonify({
+    #             'msg' : 'File is already exists.'
+    #         }), HTTP_409_CONFLICT
     if upload_data['status'] == 'ok':
     #     # new_data = UserModel(berkas=upload_data['berkas'])
         
